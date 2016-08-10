@@ -1,0 +1,15 @@
+{
+  "presets": ["es2015", "stage-0", "react"],
+  "plugins": [
+    "syntax-object-rest-spread",
+    "transform-class-properties",
+    "transform-react-pure-class-to-function",
+    "transform-react-remove-prop-types",
+    "transform-export-extensions"
+  ],
+  "env": {
+    "development": {
+      "plugins": ["react-hot-loader/babel"]
+    }
+  }
+}
