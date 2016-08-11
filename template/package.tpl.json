@@ -1,0 +1,17 @@
+{
+  "name": "%%APP_NAME%%",
+  "version": "0.0.1",
+  "description": "%%APP_DESCRIPTION%%",
+  "scripts": {
+    "start": "shazam start",
+    "build": "shazam build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/%%GITHUB_USER_AND_REPO%%.git"
+  },
+  "bugs": {
+    "url": "https://github.com/%%GITHUB_USER_AND_REPO%%/issues"
+  },
+  "homepage": "https://github.com/%%GITHUB_USER_AND_REPO%%#readme"
+}
