@@ -1,0 +1,18 @@
+@custom-media --mobile-small (width <= 320px);
+@custom-media --mobile-medium (width > 320px) and (width <= 375px);
+@custom-media --mobile-large (width > 375px) and (width <= 425px);
+@custom-media --tablet (width > 425px) and (width <= 768px);
+@custom-media --laptop-small (width > 768px) and (width <= 1024px);
+@custom-media --laptop-large (width > 1024px);
+
+@custom-media --mobile-small-max (width <= 320px);
+@custom-media --mobile-medium-max (width <= 375px);
+@custom-media --mobile-large-max (width <= 425px);
+@custom-media --tablet-max (width <= 768px);
+@custom-media --laptop-small-max (width <= 1024px);
+
+@custom-media --mobile-medium-min (width > 320px);
+@custom-media --mobile-large-min (width > 375px);
+@custom-media --tablet-min (width > 425px);
+@custom-media --laptop-small-min (width > 768px);
+@custom-media --laptop-large-min (width > 1024px);

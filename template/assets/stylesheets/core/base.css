@@ -1,0 +1,48 @@
+/*
+  Base
+*/
+
+@import 'normalize.css/normalize';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-style: normal;
+  font-family: 'Roboto', sans-serif;
+  font-size: var(--font-size);
+  font-weight: regular;
+  line-height: 1.5;
+  background: var(--body-bg);
+  text-shadow: 0 0 1px rgba(black, 0.01);
+  text-stroke: 1px, transparent;
+  font-smothing: antialiased;
+}
+
+html, body, #root {
+  height: 100%;
+  max-height: 100%;
+}
+
+body, select {
+  color: var(--text-color);
+}
+
+a, a:visited, a:active {
+  text-decoration: none;
+  color: var(--link-color);
+}
+
+a:hover {
+  color: var(--link-hover-color);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: color 9999s ease-out, background-color 9999s ease-out;
+  transition-delay: 9999s;
+}

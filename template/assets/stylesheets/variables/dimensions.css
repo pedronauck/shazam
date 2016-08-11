@@ -1,0 +1,12 @@
+:root {
+  --margin-mini: 15px;
+  --margin-small: 30px;
+  --margin: 50px;
+  --padding-mini: 15px;
+  --padding-small: 30px;
+  --padding: 50px;
+  --radius: 3px;
+  --font-size: 16px;
+  --transition-duration: .3s;
+  --container: 960px;
+}

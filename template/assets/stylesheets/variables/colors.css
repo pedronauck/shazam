@@ -1,0 +1,30 @@
+:root {
+  --body-bg: #F3F2F5;
+
+  --gray: #A4B6BE;
+  --gray-dark: #748C96;
+  --gray-light: #CED8DD;
+  --clouds: #F2F5F7;
+  --black: #182124;
+  --steel: #363E41;
+  --slate: #576368;
+
+  --brand-main: #58BCC4;
+  --brand-main-dark: #27919A;
+  --brand-main-light: #A2DBDF;
+  --brand-purple: #6769A5;
+  --brand-purple-light: #A89DCA;
+  --brand-yellow: #FFC82C;
+  --brand-yellow-light: #FFD55F;
+
+  --notice-color: var(--brand-main);
+  --waiting-color: var(--brand-yellow);
+  --error-color: #FF7773;
+  --success-color: #8AD060;
+
+  --text-color: var(--gray);
+  --text-color-dark: var(--gray-dark);
+  --title-color: var(--brand-main);
+  --link-color: var(--brand-main);
+  --link-hover-color: color(var(--link-color) l(+20%));
+}
