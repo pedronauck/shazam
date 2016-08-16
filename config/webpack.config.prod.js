@@ -64,7 +64,7 @@ module.exports = {
       query: require('./babel.prod')
     }, {
       test: /\.css$/,
-      include: [paths.app.src, paths.app.nodeModules],
+      include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: ExtractTextPlugin.extract('style', '!css?minimize!postcss')
     }, {
       test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
