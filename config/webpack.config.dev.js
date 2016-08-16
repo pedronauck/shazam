@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('../utils/WatchMissingNodeModulesPlugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const paths = require('./paths');
 const env = require('./env');
 
@@ -59,7 +60,7 @@ module.exports = {
     }, {
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
-      loader: 'style!css?sourceMap!postcss'
+      loader: ExtractTextPlugin.extract('style', '!css!postcss')
     }, {
       test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
       include: [paths.app.images, paths.app.nodeModules],
@@ -112,6 +113,7 @@ module.exports = {
     new webpack.DefinePlugin(env),
     new webpack.HotModuleReplacementPlugin(),
     new CaseSensitivePathsPlugin(),
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+    new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+    new ExtractTextPlugin('static/css/[name].css')
   ]
 };

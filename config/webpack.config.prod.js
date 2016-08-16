@@ -63,7 +63,7 @@ module.exports = {
     }, {
       test: /\.css$/,
       include: [paths.app.src, paths.app.nodeModules],
-      loader: ExtractTextPlugin.extract('style!css?minimize!postcss')
+      loader: ExtractTextPlugin.extract('style', '!css?minimize!postcss')
     }, {
       test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
       include: [paths.app.images, paths.app.nodeModules],
