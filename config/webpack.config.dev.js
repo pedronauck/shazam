@@ -14,11 +14,12 @@ module.exports = {
   entry: {
     main: [
       require.resolve('react-hot-loader/patch'),
-      require.resolve('react-hot-loader/patch'),
       require.resolve('webpack-hot-middleware/client'),
       require.resolve('./polyfills'),
       path.join(paths.app.src, 'main')
-    ]
+    ],
+    vendor: Object.keys(require(paths.app.packageJson).dependencies)
+      .filter(pkg => pkg !== '@drvem/shazam')
   },
   output: {
     path: paths.app.build,

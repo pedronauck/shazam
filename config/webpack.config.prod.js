@@ -21,7 +21,9 @@ module.exports = {
     main: [
       require.resolve('./polyfills'),
       path.join(paths.app.src, 'main')
-    ]
+    ],
+    vendor: Object.keys(require(paths.app.packageJson).dependencies)
+      .filter(pkg => pkg !== '@drvem/shazam')
   },
   output: {
     path: paths.app.build,
