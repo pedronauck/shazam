@@ -44,7 +44,7 @@ Após instalar o Shazam de forma global, você já pode rodar o comando respons�
 $ shazam init [nome-do-projeto]
 ```
 
-O comando `init` crirá a pasta com os arquivos base para o projeto, depois basta você inicializar o server de desenvolvimento:
+O comando `init` crirá a pasta com os [arquivos base para o projeto](./template), depois basta você inicializar o server de desenvolvimento:
 
 ```bash
 $ cd [nome-do-projeto]
