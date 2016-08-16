@@ -9,12 +9,12 @@ process.env.NODE_ENV = 'development';
 
 const chalk = require('chalk');
 const inquirer = require('inquirer');
+const express = require('express');
+const bodyParser = require('body-parser');
 const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const historyApiFallback = require('connect-history-api-fallback');
-const httpProxyMiddleware = require('http-proxy-middleware');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
 const detect = require('detect-port');
-const { exit } = require('shelljs');
 const config = require('../config/webpack.config.dev');
 const paths = require('../config/paths');
 
@@ -97,54 +97,29 @@ const setupCompiler = (port) => {
   });
 };
 
-const addMiddleware = (devServer) => {
-  const proxy = require(paths.app.packageJson).proxy;
-
-  devServer.use(historyApiFallback({
-    disableDotRule: true,
-    htmlAcceptHeaders: proxy ? ['text/html'] : ['text/html', '*/*']
-  }));
-
-  if (proxy) {
-    if (typeof proxy !== 'string') {
-      console.log(chalk.red('When specified, "proxy" in package.json must be a string.'));
-      console.log(chalk.red(`Instead, the type of "proxy" was "${typeof proxy}".`));
-      console.log(chalk.red('Either remove "proxy" from package.json, or make it a string.'));
-      exit(1);
-    }
-
-    const mayProxy = /^(?!\/(index\.html$|.*\.hot-update\.json$|sockjs-node\/)).*$/;
-
-    devServer.use(mayProxy,
-      httpProxyMiddleware(pathname => mayProxy.test(pathname), {
-        target: proxy,
-        logLevel: 'silent',
-        secure: false,
-        changeOrigin: true
-      })
-    );
-  }
-
-  devServer.use(devServer.middleware);
-};
-
 const runDevServer = (port) => {
-  const devServer = new WebpackDevServer(compiler, {
-    hot: true,
+  const app = express();
+
+  const middleware = webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath,
+    historyApiFallback: true,
     quiet: true,
     watchOptions: { ignored: /node_modules/ }
   });
 
-  addMiddleware(devServer);
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(middleware);
+  app.use(webpackHotMiddleware(compiler));
 
-  devServer.listen(port, (err) => {
-    if (err) {
-      return console.log(chalk.red(err))
-    }
+  app.get('*', (req, res) => {
+    const file = middleware.fileSystem.readFileSync(`${paths.app.build}/index.html`);
+    res.send(file);
+  });
 
-    clearConsole();
-    console.log(chalk.cyan('Starting the development server...\n'));
+  app.listen(port, 'localhost', (err) => {
+    if (err) console.log(err);
+    console.log(`Server listenning on port ${port}`);
   });
 };
 

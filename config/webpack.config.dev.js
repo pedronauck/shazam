@@ -12,8 +12,9 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   entry: {
     main: [
-      require.resolve('webpack-dev-server/client') + '?/',
-      require.resolve('webpack/hot/dev-server'),
+      require.resolve('react-hot-loader/patch'),
+      require.resolve('react-hot-loader/patch'),
+      require.resolve('webpack-hot-middleware/client'),
       require.resolve('./polyfills'),
       path.join(paths.app.src, 'main')
     ]

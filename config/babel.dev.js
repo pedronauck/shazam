@@ -7,6 +7,7 @@ module.exports = {
     require.resolve('babel-preset-react')
   ],
   plugins: [
+    require.resolve('react-hot-loader/babel'),
     require.resolve('babel-plugin-syntax-trailing-function-commas'),
     require.resolve('babel-plugin-transform-class-properties'),
     require.resolve('babel-plugin-transform-object-rest-spread'),
