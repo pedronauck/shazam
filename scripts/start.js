@@ -119,7 +119,7 @@ const runDevServer = (port) => {
 
   app.listen(port, 'localhost', (err) => {
     if (err) console.log(err);
-    console.log(`Server listenning on port ${port}`);
+    console.log(chalk.cyan(`Server listenning on port ${port}`));
   });
 };
 
