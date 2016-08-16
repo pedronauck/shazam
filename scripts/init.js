@@ -23,7 +23,15 @@ const DEPENDENCIES = [
   'react',
   'react-dom',
   'react-router',
-  'react-addons-perf'
+  'react-addons-perf',
+  'react-redux',
+  'react-router-redux',
+  'redux',
+  'redux-ignore',
+  'redux-thunk',
+  'redux-logger',
+  'humps',
+  'isomorphic-fetch'
 ];
 
 const APP_FOLDERS = [
@@ -60,20 +68,7 @@ const createAppStructure = (appPath, cb) => {
 };
 
 const copyMainComponents = (appPath, cb) => {
-  const appFullPath = fullPath(appPath);
-  const mainFiles = [`${TEMPLATE_DIR}/app/main.js`, `${TEMPLATE_DIR}/app/routes.js`];
-  const rootComponent = `${TEMPLATE_DIR}/app/components/Root.js`;
-  const homeComponent = `${TEMPLATE_DIR}/app/views/Home.js`;
-  const layoutsComponent = [
-    `${TEMPLATE_DIR}/app/layouts/App.js`,
-    `${TEMPLATE_DIR}/app/layouts/NotFound.js`
-  ];
-
-  cp(mainFiles, `${appFullPath}/app`);
-  cp(rootComponent, `${appFullPath}/app/components`);
-  cp(layoutsComponent, `${appFullPath}/app/layouts`);
-  cp(homeComponent, `${appFullPath}/app/views`);
-
+  cp('-R', `${TEMPLATE_DIR}/app`, fullPath(appPath));
   cb();
 };
 
@@ -137,7 +132,6 @@ const createPackageJSON = (appPath, answers, cb) => {
 
   const appFullPath = fullPath(appPath);
   const depCmd = `npm install --save ${DEPENDENCIES.join(' ')}`;
-  const cmdOpts = { silent: true };
   const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
     .toString()
     .replace('%%APP_NAME%%', answers.appName)
@@ -151,16 +145,22 @@ const createPackageJSON = (appPath, answers, cb) => {
   console.log(blue(`\n${pointer} Setting npm dependencies...`));
 
   const spinner = ora('Installing dependencies...').start();
-  exec(depCmd, cmdOpts, (depCode) => {
-    if (depCode === 0) {
-      spinner.text = 'Dependencies installed successfuly!'
-      spinner.succeed();
-      cd('../');
-      cb();
-    } else {
-      console.log(red(`${cross} Sorry, something wrong happened!`))
-      exit(0);
-    }
+  exec(depCmd, (depCode) => {
+    /*
+      Because react-hot-loader is a beta module yet, nvm doesn't install it.
+      So we need do install it as a devDependency
+    */
+    exec('npm i --save-dev react-hot-loader@^3.0.0-beta.2', (code => {
+      if (depCode === 0 && code) {
+        spinner.text = 'Dependencies installed successfuly!'
+        spinner.succeed();
+        cd('../');
+        cb();
+      } else {
+        console.log(red(`${cross} Sorry, something wrong happened!`))
+        exit(0);
+      }
+    }));
   });
 };
 
