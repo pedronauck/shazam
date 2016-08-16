@@ -62,7 +62,7 @@ const build = (previousSizeMap) => {
     console.log();
 
     const openCommand = process.platform === 'win32' ? 'start' : 'open';
-    const homepagePath = require(paths.appPackageJson).homepage;
+    const homepagePath = require(paths.app.packageJson).homepage;
     const publicPath = config.output.publicPath;
 
     if (homepagePath && homepagePath.indexOf('.github.io/') !== -1) {
@@ -114,7 +114,7 @@ const printFileSizes = (stats, previousSizeMap) => {
   const assets = stats.toJson().assets
     .filter(asset => /\.(js|css)$/.test(asset.name))
     .map(asset => {
-      const fileContents = fs.readFileSync(`${paths.app.build}'/'${asset.name}`);
+      const fileContents = fs.readFileSync(`${paths.app.build}/${asset.name}`);
       const size = gzipSize(fileContents);
       const previousSize = previousSizeMap[removeFileNameHash(asset.name)];
       const difference = getDifferenceLabel(size, previousSize);
