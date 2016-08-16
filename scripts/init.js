@@ -145,7 +145,7 @@ const createPackageJSON = (appPath, answers, cb) => {
   console.log(blue(`\n${pointer} Setting npm dependencies...`));
 
   const spinner = ora('Installing dependencies...').start();
-  exec(depCmd, (depCode) => {
+  exec(depCmd, { silent: true }, (depCode) => {
     /*
       Because react-hot-loader is a beta module yet, nvm doesn't install it.
       So we need do install it as a devDependency
