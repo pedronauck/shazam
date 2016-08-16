@@ -1,7 +1,9 @@
 import common from './common';
 
 const config = {
-  // your dev config here
+  api: {
+    hostname: 'http://localhost:3000'
+  }
 };
 
 module.exports = Object.assign(config, common);

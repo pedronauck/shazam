@@ -1,7 +1,9 @@
 import common from './common';
 
 const config = {
-  // your production config here
+  api: {
+    hostname: 'http://drvem.com.br'
+  }
 };
 
 module.exports = Object.assign(config, common);
