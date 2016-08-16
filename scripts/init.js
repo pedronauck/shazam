@@ -34,6 +34,15 @@ const DEPENDENCIES = [
   'isomorphic-fetch'
 ];
 
+const DEV_DEPENDENCIES = [
+  'eslint',
+  'eslint-plugin-flowtype',
+  'eslint-plugin-react',
+  'eslint-plugin-jsx-a11y',
+  'eslint-plugin-import',
+  'react-hot-loader@3.0.0-beta.2'
+];
+
 const APP_FOLDERS = [
   'app',
   'app/actions',
@@ -127,11 +136,28 @@ const copyBaseFiles = (appPath, cb) => {
   cb();
 };
 
+const installDependencies = (type, dependencies, cb) => {
+  const spinner = ora(`Installing ${type}...`).start();
+  const flag = type === 'dependencies' ? '--save' : '--save-dev';
+  const cmd = `npm i ${flag} ${dependencies.join(' ')}`;
+
+  exec(cmd, { silent: true }, (code) => {
+    if (code === 0) {
+      spinner.text = `${_.capitalize(type)} installed successfuly`;
+      spinner.succeed();
+      cb();
+    }
+    else {
+      console.log(red(`${cross} Sorry, something wrong happened!`))
+      exit(0);
+    }
+  })
+};
+
 const createPackageJSON = (appPath, answers, cb) => {
   console.log(blue(`\n${pointer} Setup your package.json...`))
 
   const appFullPath = fullPath(appPath);
-  const depCmd = `npm install --save ${DEPENDENCIES.join(' ')}`;
   const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
     .toString()
     .replace('%%APP_NAME%%', answers.appName)
@@ -143,24 +169,11 @@ const createPackageJSON = (appPath, answers, cb) => {
   console.log(`${tick} ./${appPath}/package.json`);
 
   console.log(blue(`\n${pointer} Setting npm dependencies...`));
-
-  const spinner = ora('Installing dependencies...').start();
-  exec(depCmd, { silent: true }, (depCode) => {
-    /*
-      Because react-hot-loader is a beta module yet, nvm doesn't install it.
-      So we need do install it as a devDependency
-    */
-    exec('npm i --save-dev react-hot-loader@^3.0.0-beta.2', (code => {
-      if (depCode === 0 && code) {
-        spinner.text = 'Dependencies installed successfuly!'
-        spinner.succeed();
-        cd('../');
-        cb();
-      } else {
-        console.log(red(`${cross} Sorry, something wrong happened!`))
-        exit(0);
-      }
-    }));
+  installDependencies('dependencies', DEPENDENCIES, () => {
+    installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
+      cd(appFullPath);
+      cb();
+    });
   });
 };
 
