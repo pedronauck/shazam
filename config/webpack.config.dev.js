@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('../utils/WatchMissingNodeModulesPlugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const paths = require('./paths');
 const env = require('./env');
 
@@ -16,6 +15,7 @@ module.exports = {
       require.resolve('react-hot-loader/patch'),
       require.resolve('webpack-hot-middleware/client'),
       require.resolve('./polyfills'),
+      path.join(paths.app.stylesheets, 'main'),
       path.join(paths.app.src, 'main')
     ],
     vendor: Object.keys(require(paths.app.packageJson).dependencies)
@@ -61,7 +61,7 @@ module.exports = {
     }, {
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
-      loader: ExtractTextPlugin.extract('style', '!css!postcss')
+      loader: 'style!css!postcss'
     }, {
       test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
       include: [paths.app.images, paths.app.nodeModules],
@@ -114,7 +114,6 @@ module.exports = {
     new webpack.DefinePlugin(env),
     new webpack.HotModuleReplacementPlugin(),
     new CaseSensitivePathsPlugin(),
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules),
-    new ExtractTextPlugin('static/css/[name].css')
+    new WatchMissingNodeModulesPlugin(paths.appNodeModules)
   ]
 };
