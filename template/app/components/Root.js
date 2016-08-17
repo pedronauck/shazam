@@ -28,7 +28,6 @@ if (process.env.NODE_ENV === 'dev') {
   }
 }
 
-
 const Root = () => {
   const store = configureStore();
   const history = syncHistoryWithStore(browserHistory, store);
@@ -38,7 +37,7 @@ const Root = () => {
       <Router history={history} routes={routes} />
     </Provider>
   );
-}
+};
 
 Root.PropTypes = {
   store: PropTypes.object,

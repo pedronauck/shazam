@@ -22,7 +22,7 @@ export default function configureStore() {
 
   const store = createStore(rootReducer, enhancer);
 
-  if (process.env.NODE_ENV === 'dev' && module.hot) {
+  if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('../../reducers', () => {
       const nextReducer = require('../../reducers').default;
 
