@@ -1,5 +1,6 @@
 *.swp
 *.log
 *.log.*
+shazamconfig.json
 node_modules
 build

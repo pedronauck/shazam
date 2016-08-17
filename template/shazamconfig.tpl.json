@@ -1,0 +1,11 @@
+{
+  "appName": "%%APP_NAME%%",
+  "htmlData": {
+    "development": {
+      "variable": "some development variable"
+    },
+    "production": {
+      "variable": "some production variable"
+    }
+  }
+}

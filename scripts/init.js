@@ -101,39 +101,64 @@ const addAssets = (appPath, cb) => {
 const copyEnvConfigFiles = (appPath, cb) => {
   const configDir = 'config';
   const files = ls(`${TEMPLATE_DIR}/${configDir}`);
+  const appFullPath = fullPath(appPath);
 
   console.log(blue(`\n${pointer} Copying environment config files...`));
 
-  cd(fullPath(appPath));
-  mkdir(`./${configDir}`);
-
+  mkdir(`${appFullPath}/${configDir}`);
   files.forEach(filename => {
-    cp(`${TEMPLATE_DIR}/${configDir}/${filename}`, `./${configDir}`);
+    cp(`${TEMPLATE_DIR}/${configDir}/${filename}`, `${appFullPath}/${configDir}`);
     console.log(`${tick} ./${appPath}/${configDir}/${filename}`);
   });
 
-  cd('../');
   cb();
 };
 
 const copyBaseFiles = (appPath, cb) => {
-  const files = ls(TEMPLATE_DIR).filter(file => /^_/.test(file));
-
   console.log(blue(`\n${pointer} Copying base files...`));
 
-  cd(fullPath(appPath));
+  const appFullPath = fullPath(appPath);
 
-  files.forEach(copiedFile => {
-    const filename = copiedFile.replace('_', '.');
+  ls(TEMPLATE_DIR)
+    .filter(file => /^_/.test(file))
+    .forEach((copiedFile) => {
+      const filename = copiedFile.replace('_', '.');
 
-    cp(`${TEMPLATE_DIR}/${copiedFile}`, './');
-    mv(`./${copiedFile}`, `./${filename}`);
+      cp(`${TEMPLATE_DIR}/${copiedFile}`, appFullPath);
+      mv(`${appFullPath}/${copiedFile}`, `${appFullPath}/${filename}`);
 
-    console.log(`${tick} ./${appPath}/${filename}`);
-  });
+      console.log(`${tick} ./${appPath}/${filename}`);
+    });
 
-  cd('../');
   cb();
+};
+
+const createJsonFile = (filename, template, appPath, cb) => {
+  const appFullPath = fullPath(appPath);
+
+  console.log(blue(`\n${pointer} Setup your ${filename}.json...`))
+  fs.writeFileSync(`${appFullPath}/${filename}.json`, template, 'utf-8');
+  console.log(`${tick} ./${appPath}/${filename}.json`);
+
+  cb();
+};
+
+const createPackageJSON = (appPath, answers, cb) => {
+  const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
+    .toString()
+    .replace('%%APP_NAME%%', answers.appName)
+    .replace('%%APP_DESCRIPTION%%', answers.appDescription)
+    .replace(/%%GITHUB_USER_AND_REPO%%/gm, `${answers.gitUser}/${answers.appName}`);
+
+  createJsonFile('package', templateStr, appPath, cb);
+};
+
+const createShazamConfig = (appPath, answers, cb) => {
+  const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/shazamconfig.tpl.json`)
+    .toString()
+    .replace(`%%APP_NAME%%`, answers.appName);
+
+  createJsonFile('shazamconfig', templateStr, appPath, cb);
 };
 
 const installDependencies = (type, dependencies, cb) => {
@@ -154,24 +179,12 @@ const installDependencies = (type, dependencies, cb) => {
   })
 };
 
-const createPackageJSON = (appPath, answers, cb) => {
-  console.log(blue(`\n${pointer} Setup your package.json...`))
-
-  const appFullPath = fullPath(appPath);
-  const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
-    .toString()
-    .replace('%%APP_NAME%%', answers.appName)
-    .replace('%%APP_DESCRIPTION%%', answers.appDescription)
-    .replace(/%%GITHUB_USER_AND_REPO%%/gm, `${answers.gitUser}/${answers.appName}`);
-
-  cd(appFullPath);
-  fs.writeFileSync(`${appFullPath}/package.json`, templateStr, 'utf-8');
-  console.log(`${tick} ./${appPath}/package.json`);
+const installNpmDependencies = (appPath, cb) => {
+  cd(fullPath(appPath));
 
   console.log(blue(`\n${pointer} Setting npm dependencies...`));
   installDependencies('dependencies', DEPENDENCIES, () => {
     installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
-      cd(appFullPath);
       cb();
     });
   });
@@ -202,7 +215,9 @@ module.exports = function(defaultAppName) {
       (cb) => addAssets(appPath, cb),
       (cb) => copyBaseFiles(appPath, cb),
       (cb) => copyEnvConfigFiles(appPath, cb),
-      (cb) => createPackageJSON(appPath, answers, cb)
+      (cb) => createPackageJSON(appPath, answers, cb),
+      (cb) => createShazamConfig(appPath, answers, cb),
+      (cb) => installNpmDependencies(appPath, cb)
     ]);
   });
 }

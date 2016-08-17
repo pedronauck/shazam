@@ -1,62 +1,28 @@
+const _ = require('lodash');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const url = require('url');
+const common = require('./webpack.config.common.js');
 const paths = require('./paths');
 const env = require('./env');
 
-const homepagePath = require(paths.app.packageJson).homepage;
+const shazamConfig = require(paths.app.shazamConfig);
 
-let publicPath = homepagePath ? url.parse(homepagePath).pathname : '/';
-
-if (!publicPath.endsWith('/')) {
-  publicPath += '/';
-}
-
-module.exports = {
+module.exports = _.merge(common, {
   bail: true,
   devtool: 'source-map',
   entry: {
     main: [
       require.resolve('./polyfills'),
       path.join(paths.app.src, 'main')
-    ],
-    vendor: Object.keys(require(paths.app.packageJson).dependencies)
-      .filter(pkg => pkg !== '@drvem/shazam')
+    ]
   },
   output: {
-    path: paths.app.build,
     filename: 'static/js/[name].[chunkhash:8].js',
-    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
-    publicPath
-  },
-  resolve: {
-    extensions: ['.js', '.css', ''],
-    alias: {
-      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
-      'config': `${paths.app.config}/dev.js`,
-      'app': paths.app.src,
-      'actions': `${paths.app.src}/actions`,
-      'components': `${paths.app.src}/components`,
-      'constants': `${paths.app.src}/constants`,
-      'layouts': `${paths.app.src}/layouts`,
-      'reducers': `${paths.app.src}/reducers`,
-      'utils': `${paths.app.src}/utils`,
-      'views': `${paths.app.src}/views`,
-      'stylesheets': paths.app.stylesheets
-    }
-  },
-  resolveLoader: {
-    root: paths.nodeModules,
-    moduleTemplates: ['*-loader']
+    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js'
   },
   module: {
-    preLoaders: [{
-      test: /\.js$/,
-      loader: 'eslint',
-      include: paths.app.src,
-    }],
     loaders: [{
       test: /\.js$/,
       include: paths.app.src,
@@ -83,36 +49,11 @@ module.exports = {
       }
     }]
   },
-  eslint: {
-    configFile: path.join(__dirname, 'eslint.js'),
-    useEslintrc: false
-  },
-  postcss(bundler) {
-    return [
-      require('postcss-easy-import')({
-        addDependencyTo: bundler,
-        path: [paths.app.nodeModules, paths.app.stylesheets],
-        glob: true
-      }),
-      require('postcss-assets')({
-        basePath: paths.app.build,
-        loadPaths: ['images/'],
-        cachebuster: true
-      }),
-      require('postcss-mixins'),
-      require('postcss-simple-vars'),
-      require('postcss-font-magician'),
-      require('postcss-font-weight-names'),
-      require('postcss-pxtorem'),
-      require('postcss-cssnext'),
-      require('postcss-merge-rules'),
-      require('css-mqpacker')
-    ];
-  },
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
+      data: shazamConfig.htmlData.production || {},
       // favicon: paths.appFavicon,
       minify: {
         removeComments: true,
@@ -145,4 +86,4 @@ module.exports = {
     }),
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
   ]
-};
+});

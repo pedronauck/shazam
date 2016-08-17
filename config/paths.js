@@ -14,7 +14,8 @@ module.exports = {
     build: resolveApp('build'),
     packageJson: resolveApp('package.json'),
     nodeModules: resolveApp('node_modules'),
-    htmlFile: resolveApp('assets/index.ejs')
+    htmlFile: resolveApp('assets/index.ejs'),
+    shazamConfig: resolveApp('shazamconfig.json')
   },
   config: resolveOwn('../config'),
   nodeModules: resolveOwn('../node_modules')
