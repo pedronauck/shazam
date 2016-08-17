@@ -1,28 +1,56 @@
-const _ = require('lodash');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const common = require('./webpack.config.common.js');
+const postcss = require('./postcss');
 const paths = require('./paths');
 const env = require('./env');
 
+const appPackageJson = require(paths.app.packageJson);
 const shazamConfig = require(paths.app.shazamConfig);
 
-module.exports = _.merge(common, {
+module.exports = {
   bail: true,
   devtool: 'source-map',
   entry: {
     main: [
       require.resolve('./polyfills'),
       path.join(paths.app.src, 'main')
-    ]
+    ],
+    vendor: Object.keys(appPackageJson.dependencies).filter(pkg => pkg !== '@drvem/shazam')
   },
   output: {
     filename: 'static/js/[name].[chunkhash:8].js',
-    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js'
+    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
+    path: paths.app.build,
+    publicPath: '/'
+  },
+  resolve: {
+    extensions: ['.js', '.css', ''],
+    alias: {
+      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
+      'config': `${paths.app.config}/dev.js`,
+      'app': paths.app.src,
+      'actions': `${paths.app.src}/actions`,
+      'components': `${paths.app.src}/components`,
+      'constants': `${paths.app.src}/constants`,
+      'layouts': `${paths.app.src}/layouts`,
+      'reducers': `${paths.app.src}/reducers`,
+      'utils': `${paths.app.src}/utils`,
+      'views': `${paths.app.src}/views`,
+      'stylesheets': paths.app.stylesheets
+    }
+  },
+  resolveLoader: {
+    root: paths.nodeModules,
+    moduleTemplates: ['*-loader']
   },
   module: {
+    preLoaders: [{
+      test: /\.js$/,
+      loader: 'eslint',
+      include: paths.app.src,
+    }],
     loaders: [{
       test: /\.js$/,
       include: paths.app.src,
@@ -85,5 +113,10 @@ module.exports = _.merge(common, {
       }
     }),
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
-  ]
-});
+  ],
+  eslint: {
+    configFile: path.join(__dirname, 'eslint.js'),
+    useEslintrc: false
+  },
+  postcss
+};
