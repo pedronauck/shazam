@@ -1,4 +1,4 @@
-import common from './common';
+const common = require('./common');
 
 const config = {
   api: {
