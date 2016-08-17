@@ -3,10 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "description": "%%APP_DESCRIPTION%%",
-  "scripts": {
-    "start": "shazam start",
-    "build": "shazam build"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/%%GITHUB_USER_AND_REPO%%.git"

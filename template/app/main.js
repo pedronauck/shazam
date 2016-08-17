@@ -1,5 +1,3 @@
-import 'stylesheets/main';
-
 import React from 'react';
 import Perf from 'react-addons-perf';
 import { AppContainer } from 'react-hot-loader';
