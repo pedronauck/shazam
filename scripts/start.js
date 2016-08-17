@@ -14,92 +14,30 @@ const bodyParser = require('body-parser');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+const Dashboard = require('webpack-dashboard');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 const detect = require('detect-port');
 const config = require('../config/webpack.config.dev');
 const paths = require('../config/paths');
 
 const DEFAULT_PORT = process.env.PORT || 3000;
+
 let compiler;
+let dashboard;
 let handleCompile;
-
-const friendlySyntaxErrorLabel = 'Syntax error:';
-
-const isLikelyASyntaxError = (message) =>
-  message.indexOf(friendlySyntaxErrorLabel) !== -1;
-
-const formatMessage = (message) =>
-  message
-    .replace('Module build failed: SyntaxError:', friendlySyntaxErrorLabel)
-    .replace(
-      /Module not found: Error: Cannot resolve 'file' or 'directory'/,
-      'Module not found:'
-    )
-    .replace(/^\s*at\s.*:\d+:\d+[\s\)]*\n/gm, '')
-    .replace('./~/css-loader!./~/postcss-loader!', '');
 
 const clearConsole = () =>
   process.stdout.write('\x1bc');
 
 const setupCompiler = (port) => {
   compiler = webpack(config, handleCompile);
+  dashboard = new Dashboard();
 
-  compiler.plugin('invalid', () => {
-    clearConsole();
-    console.log('Compiling...');
-  });
-
-  compiler.plugin('done', (stats) => {
-    clearConsole();
-
-    const hasErrors = stats.hasErrors();
-    const hasWarnings = stats.hasWarnings();
-    const json = stats.toJson({}, true);
-    const formattedWarnings = json.warnings.map(message => `Warning in ${formatMessage(message)}`);
-    let formattedErrors = json.errors.map(message => `Error in ${formatMessage(message)}`);
-
-    if (!hasErrors && !hasWarnings) {
-      console.log(chalk.green('Compiled successfully!'));
-      console.log('\nThe app is running at:');
-      console.log(chalk.cyan(`http://localhost:${port}/`));
-      console.log('\nNote that the development build is not optimized.');
-      console.log(`To create a production build, use ${chalk.cyan('npm run build')}.\n`);
-      return;
-    }
-
-    if (hasErrors) {
-      console.log(chalk.red('Failed to compile.\n'));
-
-      if (formattedErrors.some(isLikelyASyntaxError)) {
-        formattedErrors = formattedErrors.filter(isLikelyASyntaxError);
-      }
-
-      formattedErrors.forEach(message => {
-        console.log(message);
-        console.log();
-      });
-
-      return;
-    }
-
-    if (hasWarnings) {
-      console.log(chalk.yellow('Compiled with warnings.'));
-      console.log();
-
-      formattedWarnings.forEach(message => {
-        console.log(message);
-        console.log();
-      });
-
-      console.log('You may use special comments to disable some warnings.');
-      console.log(`Use ${chalk.yellow('// eslint-disable-next-line')} to ignore the next line.`);
-      console.log(`Use ${chalk.yellow('/* eslint-disable */')} to ignore all warnings in a file.`);
-    }
-  });
+  compiler.apply(new DashboardPlugin(dashboard.setData));
 };
 
 const runDevServer = (port) => {
   const app = express();
-
   const middleware = webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath,
     historyApiFallback: true,
@@ -118,7 +56,7 @@ const runDevServer = (port) => {
   });
 
   app.listen(port, 'localhost', (err) => {
-    if (err) console.log(err);
+    if (err) console.log(chalk.red(err));
     console.log(chalk.cyan(`Server listenning on port ${port}`));
   });
 };
