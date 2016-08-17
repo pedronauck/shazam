@@ -48,7 +48,9 @@ const runDevServer = (port) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(middleware);
-  app.use(webpackHotMiddleware(compiler));
+  app.use(webpackHotMiddleware(compiler, {
+    log: () => {}
+  }));
 
   app.get('*', (req, res) => {
     const file = middleware.fileSystem.readFileSync(`${paths.app.build}/index.html`);
