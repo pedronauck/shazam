@@ -40,6 +40,22 @@ export default new Config().merge({
       test: /\.js$/,
       loader: 'eslint',
       include: paths.app.src,
+    }],
+    loaders: [{
+      test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
+      include: [paths.app.images, paths.app.nodeModules],
+      loader: 'file',
+      query: {
+        name: 'static/media/[name].[hash:8].[ext]'
+      }
+    }, {
+      test: /\.(mp4|webm)(\?.*)?$/,
+      include: [paths.app.media, paths.app.nodeModules],
+      loader: 'url',
+      query: {
+        limit: 10000,
+        name: 'static/media/[name].[hash:8].[ext]'
+      }
     }]
   },
   plugins: [

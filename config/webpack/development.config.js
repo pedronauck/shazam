@@ -34,21 +34,6 @@ export default new Config().extend(resolve(__dirname, './base.config.js')).merge
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: 'style!css!postcss'
-    }, {
-      test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
-      include: [paths.app.images, paths.app.nodeModules],
-      loader: 'file',
-      query: {
-        name: 'static/media/[name].[ext]'
-      }
-    }, {
-      test: /\.(mp4|webm)(\?.*)?$/,
-      include: [paths.app.media, paths.app.nodeModules],
-      loader: 'url',
-      query: {
-        limit: 10000,
-        name: 'static/media/[name].[ext]'
-      }
     }]
   },
   plugins: [
@@ -56,7 +41,6 @@ export default new Config().extend(resolve(__dirname, './base.config.js')).merge
       inject: true,
       template: paths.app.htmlFile,
       data: shazamConfig.htmlData.development || {}
-      // favicon: paths.appFavicon,
     }),
     new webpack.HotModuleReplacementPlugin(),
     new CaseSensitivePathsPlugin(),
