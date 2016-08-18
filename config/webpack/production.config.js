@@ -1,61 +1,32 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const postcss = require('./postcss');
-const paths = require('./paths');
-const env = require('./env');
+import { join, resolve } from 'path';
+import Config from 'webpack-config';
+import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import paths from '../paths';
+import babelQuery from '../babel.prod';
 
-const appPackageJson = require(paths.app.packageJson);
 const shazamConfig = require(paths.app.shazamConfig);
 
-module.exports = {
+export default new Config().extend(resolve(__dirname, './base.config.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
     main: [
       require.resolve('./polyfills'),
-      path.join(paths.app.src, 'main')
-    ],
-    vendor: Object.keys(appPackageJson.dependencies).filter(pkg => pkg !== '@drvem/shazam')
+      join(paths.app.src, 'main')
+    ]
   },
   output: {
     filename: 'static/js/[name].[chunkhash:8].js',
-    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
-    path: paths.app.build,
-    publicPath: '/'
-  },
-  resolve: {
-    extensions: ['.js', '.css', ''],
-    alias: {
-      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
-      'config': `${paths.app.config}/dev.js`,
-      'app': paths.app.src,
-      'actions': `${paths.app.src}/actions`,
-      'components': `${paths.app.src}/components`,
-      'constants': `${paths.app.src}/constants`,
-      'layouts': `${paths.app.src}/layouts`,
-      'reducers': `${paths.app.src}/reducers`,
-      'utils': `${paths.app.src}/utils`,
-      'views': `${paths.app.src}/views`,
-      'stylesheets': paths.app.stylesheets
-    }
-  },
-  resolveLoader: {
-    root: paths.nodeModules,
-    moduleTemplates: ['*-loader']
+    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js'
   },
   module: {
-    preLoaders: [{
-      test: /\.js$/,
-      loader: 'eslint',
-      include: paths.app.src,
-    }],
     loaders: [{
       test: /\.js$/,
       include: paths.app.src,
       loader: 'babel',
-      query: require('./babel.prod')
+      query: babelQuery
     }, {
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
@@ -96,7 +67,6 @@ module.exports = {
         minifyURLs: true
       }
     }),
-    new webpack.DefinePlugin(env),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
@@ -113,10 +83,5 @@ module.exports = {
       }
     }),
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
-  ],
-  eslint: {
-    configFile: path.join(__dirname, 'eslint.js'),
-    useEslintrc: false
-  },
-  postcss
-};
+  ]
+});
