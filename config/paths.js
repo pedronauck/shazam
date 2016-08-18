@@ -1,9 +1,9 @@
-const path = require('path');
+import path from 'path';
 
 const resolveOwn = (relativePath) => path.resolve(__dirname, relativePath);
 const resolveApp = (relativePath) => path.resolve(relativePath);
 
-module.exports = {
+export default {
   app: {
     src: resolveApp('app'),
     assets: resolveApp('assets'),
@@ -19,4 +19,4 @@ module.exports = {
   },
   config: resolveOwn('../config'),
   nodeModules: resolveOwn('../node_modules')
-};
+}

@@ -1,6 +1,6 @@
-const paths = require('./paths');
+import paths from './paths';
 
-module.exports = function(bundler) {
+export default function(bundler) {
   return [
     require('postcss-easy-import')({
       addDependencyTo: bundler,

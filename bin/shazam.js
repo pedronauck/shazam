@@ -1,18 +1,19 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node --
 /* eslint no-unused-expressions: 0, func-names: 0 */
 
-const yargs = require('yargs');
+import yargs from 'yargs';
+import { init, start, build } from '../scripts';
 
 yargs
   .usage('$0 <cmd> [args]')
-  .command('init [name]', 'create app structure', {}, function(argv) {
-    require('../scripts/init')(argv.name);
+  .command('init [name]', 'create app structure', {}, (argv) => {
+    init(argv.name);
   })
-  .command('start', 'run development server', {}, function(argv) {
-    require('../scripts/start')();
+  .command('start', 'run development server', {}, (argv) => {
+    start();
   })
-  .command('build', 'build production version of app', {}, function(argv) {
-    require('../scripts/build')();
+  .command('build', 'build production version of app', {}, (argv) => {
+    build();
   })
   .help()
   .argv;

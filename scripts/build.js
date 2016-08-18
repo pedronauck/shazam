@@ -11,17 +11,18 @@
 
 process.env.NODE_ENV = 'production';
 
-const chalk = require('chalk');
-const fs = require('fs');
-const del = require('del');
-const path = require('path');
-const filesize = require('filesize');
-const webpack = require('webpack');
-const recursive = require('recursive-readdir');
-const stripAnsi = require('strip-ansi');
-const { exit } = require('shelljs');
-const config = require('../config/webpack.config.prod');
-const paths = require('../config/paths');
+import chalk from 'chalk';
+import fs from 'fs';
+import del from 'del';
+import path from 'path';
+import filesize from 'filesize';
+import webpack from 'webpack';
+import recursive from 'recursive-readdir';
+import stripAnsi from 'strip-ansi';
+import { exit } from 'shelljs';
+import config from '../config/webpack.config';
+import paths from '../config/paths';
+
 const gzipSize = require('gzip-size').sync;
 
 const removeFileNameHash = (fileName) =>
@@ -149,7 +150,7 @@ const printFileSizes = (stats, previousSizeMap) => {
   });
 };
 
-module.exports = function() {
+export default function() {
   recursive(paths.app.build, (err, fileNames) => {
     const previousSizeMap = (fileNames || [])
       .filter(fileName => /\.(js|css)$/.test(fileName))

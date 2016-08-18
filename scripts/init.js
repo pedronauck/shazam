@@ -1,21 +1,19 @@
 /* eslint no-console: 0 */
 
-const _ = require('lodash');
-const fs = require('fs');
-const path = require('path');
-const ora = require('ora');
-const inquirer = require('inquirer');
-const figures = require('figures');
-const async = require('async');
-const { resolve } = require('path');
-const { red, green, blue } = require('chalk');
-const { mkdir, test, exit, exec, find, ls, cd, cp, mv } = require('shelljs');
+import ora from 'ora';
+import { readFileSync, writeFileSync } from 'fs';
+import { prompt } from 'inquirer';
+import { resolve } from 'path';
+import { series } from 'async';
+import { capitalize, kebabCase } from 'lodash';
+import { red, green, blue } from 'chalk';
+import { tick as tickEmoji, cross as crossEmoji, pointer } from 'figures';
+import { mkdir, test, exit, exec, find, ls, cd, cp, mv } from 'shelljs';
 
-const tick = green(figures.tick);
-const cross = red(figures.cross);
-const { pointer } = figures;
+const tick = green(tickEmoji);
+const cross = red(crossEmoji);
 
-const TEMPLATE_DIR = path.resolve(__dirname, '../template');
+const TEMPLATE_DIR = resolve(__dirname, '../template');
 
 const DEPENDENCIES = [
   '@drvem/components',
@@ -137,14 +135,14 @@ const createJsonFile = (filename, template, appPath, cb) => {
   const appFullPath = fullPath(appPath);
 
   console.log(blue(`\n${pointer} Setup your ${filename}.json...`))
-  fs.writeFileSync(`${appFullPath}/${filename}.json`, template, 'utf-8');
+  writeFileSync(`${appFullPath}/${filename}.json`, template, 'utf-8');
   console.log(`${tick} ./${appPath}/${filename}.json`);
 
   cb();
 };
 
 const createPackageJSON = (appPath, answers, cb) => {
-  const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
+  const templateStr = readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
     .toString()
     .replace('%%APP_NAME%%', answers.appName)
     .replace('%%APP_DESCRIPTION%%', answers.appDescription)
@@ -154,7 +152,7 @@ const createPackageJSON = (appPath, answers, cb) => {
 };
 
 const createShazamConfig = (appPath, answers, cb) => {
-  const templateStr = fs.readFileSync(`${TEMPLATE_DIR}/shazamconfig.tpl.json`)
+  const templateStr = readFileSync(`${TEMPLATE_DIR}/shazamconfig.tpl.json`)
     .toString()
     .replace(`%%APP_NAME%%`, answers.appName);
 
@@ -168,7 +166,7 @@ const installDependencies = (type, dependencies, cb) => {
 
   exec(cmd, { silent: true }, (code) => {
     if (code === 0) {
-      spinner.text = `${_.capitalize(type)} installed successfuly`;
+      spinner.text = `${capitalize(type)} installed successfuly`;
       spinner.succeed();
       cb();
     }
@@ -182,7 +180,7 @@ const installDependencies = (type, dependencies, cb) => {
 const installNpmDependencies = (appPath, cb) => {
   cd(fullPath(appPath));
 
-  console.log(blue(`\n${pointer} Setting npm dependencies...`));
+  console.log(blue(`\n${pointer} Install npm dependencies... This may take couple minutes!`));
   installDependencies('dependencies', DEPENDENCIES, () => {
     installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
       cb();
@@ -206,10 +204,10 @@ module.exports = function(defaultAppName) {
     message: 'The owner of your repository on Git:'
   }];
 
-  inquirer.prompt(prompts).then((answers) => {
-    const appPath = _.kebabCase(answers.appName);
+  prompt(prompts).then((answers) => {
+    const appPath = kebabCase(answers.appName);
 
-    async.series([
+    series([
       (cb) => createAppStructure(appPath, cb),
       (cb) => copyMainComponents(appPath, cb),
       (cb) => addAssets(appPath, cb),

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   babelrc: false,
   cacheDirectory: true,
   presets: [
@@ -19,4 +19,4 @@ module.exports = {
     }],
     require.resolve('babel-plugin-transform-react-constant-elements')
   ]
-};
+}
