@@ -96,22 +96,6 @@ const addAssets = (appPath, cb) => {
   cb();
 };
 
-const copyEnvConfigFiles = (appPath, cb) => {
-  const configDir = 'config';
-  const files = ls(`${TEMPLATE_DIR}/${configDir}`);
-  const appFullPath = fullPath(appPath);
-
-  console.log(blue(`\n${pointer} Copying environment config files...`));
-
-  mkdir(`${appFullPath}/${configDir}`);
-  files.forEach(filename => {
-    cp(`${TEMPLATE_DIR}/${configDir}/${filename}`, `${appFullPath}/${configDir}`);
-    console.log(`${tick} ./${appPath}/${configDir}/${filename}`);
-  });
-
-  cb();
-};
-
 const copyBaseFiles = (appPath, cb) => {
   console.log(blue(`\n${pointer} Copying base files...`));
 
@@ -131,36 +115,32 @@ const copyBaseFiles = (appPath, cb) => {
   cb();
 };
 
-const createJsonFile = (filename, template, appPath, cb) => {
-  const appFullPath = fullPath(appPath);
-
-  console.log(blue(`\n${pointer} Setup your ${filename}.json...`))
-  writeFileSync(`${appFullPath}/${filename}.json`, template, 'utf-8');
-  console.log(`${tick} ./${appPath}/${filename}.json`);
-
-  cb();
-};
-
 const createPackageJSON = (appPath, answers, cb) => {
-  const templateStr = readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
+  const appFullPath = fullPath(appPath);
+  const template = readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
     .toString()
     .replace('%%APP_NAME%%', answers.appName)
     .replace('%%APP_DESCRIPTION%%', answers.appDescription)
     .replace(/%%GITHUB_USER_AND_REPO%%/gm, `${answers.gitUser}/${answers.appName}`);
 
-  createJsonFile('package', templateStr, appPath, cb);
+  console.log(blue(`\n${pointer} Setup your package.json...`))
+  writeFileSync(`${appFullPath}/package.json`, template, 'utf-8');
+  console.log(`${tick} ./${appPath}/package.json`);
+
+  cb();
 };
 
-const createShazamConfig = (appPath, answers, cb) => {
-  const templateStr = readFileSync(`${TEMPLATE_DIR}/shazamconfig.tpl.json`)
-    .toString()
-    .replace(`%%APP_NAME%%`, answers.appName);
+const createShazamConfig = (appPath, cb) => {
+  const appFullPath = fullPath(appPath);
+  const filename = 'shazam.tpl.config.js';
 
-  createJsonFile('shazamconfig', templateStr, appPath, cb);
+  cp(`${TEMPLATE_DIR}/${filename}`, appFullPath);
+  mv(`${appFullPath}/${filename}`, `${appFullPath}/${filename.replace('.tpl', '')}`);
+  cb();
 };
 
 const installDependencies = (type, dependencies, cb) => {
-  const spinner = ora(`Installing ${type}...`).start();
+  const spinner = ora(`Downloading ${type}`).start();
   const flag = type === 'dependencies' ? '--save' : '--save-dev';
   const cmd = `npm i ${flag} ${dependencies.join(' ')}`;
 
@@ -180,7 +160,7 @@ const installDependencies = (type, dependencies, cb) => {
 const installNpmDependencies = (appPath, cb) => {
   cd(fullPath(appPath));
 
-  console.log(blue(`\n${pointer} Install npm dependencies... This may take couple minutes!`));
+  console.log(blue(`\n${pointer} Installing npm packages... This may take couple minutes!`));
   installDependencies('dependencies', DEPENDENCIES, () => {
     installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
       cb();
@@ -212,9 +192,8 @@ module.exports = function(defaultAppName) {
       (cb) => copyMainComponents(appPath, cb),
       (cb) => addAssets(appPath, cb),
       (cb) => copyBaseFiles(appPath, cb),
-      (cb) => copyEnvConfigFiles(appPath, cb),
       (cb) => createPackageJSON(appPath, answers, cb),
-      (cb) => createShazamConfig(appPath, answers, cb),
+      (cb) => createShazamConfig(appPath, cb),
       (cb) => installNpmDependencies(appPath, cb)
     ]);
   });

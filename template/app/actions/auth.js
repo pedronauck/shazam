@@ -1,4 +1,3 @@
-import { api } from 'config';
 import { fetchResource } from 'utils/redux/fetchResource';
 
 import {
@@ -8,6 +7,8 @@ import {
   REGISTER_RESPONSE,
   LOGOUT
 } from '../constants/ActionTypes';
+
+const { api } = CONFIG;
 
 const loginRequest = () => ({
   type: LOGIN_REQUEST

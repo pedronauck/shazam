@@ -15,7 +15,7 @@ export default {
     packageJson: resolveApp('package.json'),
     nodeModules: resolveApp('node_modules'),
     htmlFile: resolveApp('assets/index.ejs'),
-    shazamConfig: resolveApp('shazamconfig.json')
+    shazamConfig: resolveApp('shazam.config.js')
   },
   config: resolveOwn('../config'),
   nodeModules: resolveOwn('../node_modules')

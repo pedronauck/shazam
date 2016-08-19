@@ -2,18 +2,17 @@
 /* eslint no-unused-expressions: 0, func-names: 0 */
 
 import yargs from 'yargs';
-import { init, start, build } from '../scripts';
 
 yargs
   .usage('$0 <cmd> [args]')
   .command('init [name]', 'create app structure', {}, (argv) => {
-    init(argv.name);
+    require('../scripts/init')(argv.name);
   })
   .command('start', 'run development server', {}, (argv) => {
-    start();
+    require('../scripts/start')();
   })
   .command('build', 'build production version of app', {}, (argv) => {
-    build();
+    require('../scripts/build')();
   })
   .help()
   .argv;

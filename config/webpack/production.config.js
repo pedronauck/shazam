@@ -5,8 +5,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import paths from '../paths';
 import babelQuery from '../babel.prod';
-
-const shazamConfig = require(paths.app.shazamConfig);
+import loadConfig from '../../utils/loadConfig';
 
 export default new Config().extend(resolve(__dirname, './base.config.js')).merge({
   bail: true,
@@ -37,7 +36,7 @@ export default new Config().extend(resolve(__dirname, './base.config.js')).merge
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
-      data: shazamConfig.htmlData.production || {},
+      data: loadConfig('data'),
       minify: {
         removeComments: true,
         collapseWhitespace: true,

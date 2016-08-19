@@ -11,6 +11,10 @@ module.exports = {
     node: true
   },
 
+  globals: {
+    'CONFIG': true
+  },
+
   parserOptions: {
     ecmaVersion: 6,
     sourceType: 'module',

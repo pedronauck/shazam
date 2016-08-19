@@ -6,8 +6,7 @@ import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import WatchMissingNodeModulesPlugin from '../../utils/WatchMissingNodeModulesPlugin';
 import paths from '../paths';
 import babelQuery from '../babel.dev';
-
-const shazamConfig = require(paths.app.shazamConfig);
+import loadConfig from '../../utils/loadConfig';
 
 export default new Config().extend(resolve(__dirname, './base.config.js')).merge({
   devtool: 'cheap-module-source-map',
@@ -40,7 +39,7 @@ export default new Config().extend(resolve(__dirname, './base.config.js')).merge
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
-      data: shazamConfig.htmlData.development || {}
+      data: loadConfig('htmlData')
     }),
     new webpack.HotModuleReplacementPlugin(),
     new CaseSensitivePathsPlugin(),
