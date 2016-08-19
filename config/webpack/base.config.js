@@ -1,10 +1,10 @@
-import path from 'path';
-import webpack from 'webpack';
-import Config from 'webpack-config';
-import postcss from '../postcss';
-import paths from '../paths';
-import env from '../env';
-import loadConfig from '../../utils/loadConfig';
+const path = require('path');
+const webpack = require('webpack');
+const { Config } = require('webpack-config');
+const postcss = require('../postcss');
+const paths = require('../paths');
+const env = require('../env');
+const loadConfig = require('../../utils/loadConfig');
 
 const defaultConfig = new Config().merge({
   entry: {
@@ -70,4 +70,4 @@ const defaultConfig = new Config().merge({
   postcss
 });
 
-export default defaultConfig.merge(loadConfig('webpackConfig'));
+module.exports = defaultConfig.merge(loadConfig('webpackConfig'));

@@ -1,3 +1,3 @@
-export init from './init';
-export start from './start';
-export build from './build';
+exports.init = require('./init');
+exports.start = require('./start');
+exports.build = require('./build');

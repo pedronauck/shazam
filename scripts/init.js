@@ -1,14 +1,14 @@
 /* eslint no-console: 0 */
 
-import ora from 'ora';
-import { readFileSync, writeFileSync } from 'fs';
-import { prompt } from 'inquirer';
-import { resolve } from 'path';
-import { series } from 'async';
-import { capitalize, kebabCase } from 'lodash';
-import { red, green, blue } from 'chalk';
-import { tick as tickEmoji, cross as crossEmoji, pointer } from 'figures';
-import { mkdir, test, exit, exec, find, ls, cd, cp, mv } from 'shelljs';
+const ora = require('ora');
+const { readFileSync, writeFileSync } = require('fs');
+const { prompt } = require('inquirer');
+const { resolve } = require('path');
+const { series } = require('async');
+const { capitalize, kebabCase } = require('lodash');
+const { red, green, blue } = require('chalk');
+const { tick: tickEmoji, cross: crossEmoji, pointer } = require('figures');
+const { mkdir, test, exit, exec, find, ls, cd, cp, mv } = require('shelljs');
 
 const tick = green(tickEmoji);
 const cross = red(crossEmoji);

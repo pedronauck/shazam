@@ -1,5 +1,5 @@
-import env from '../config/env';
-import paths from '../config/paths';
+const env = require('../config/env');
+const paths = require('../config/paths');
 
 let shazamConfig;
 
@@ -10,7 +10,7 @@ catch(e) {
   shazamConfig = {};
 }
 
-const loadConfig = (method) => {
+module.exports = (method) => {
   const conf = shazamConfig[method];
   const envName = JSON.parse(env['process.env.NODE_ENV']);
 
@@ -20,5 +20,3 @@ const loadConfig = (method) => {
 
   return {};
 };
-
-export default loadConfig;

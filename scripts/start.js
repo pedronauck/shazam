@@ -7,18 +7,18 @@
 
 process.env.NODE_ENV = 'development';
 
-import chalk from 'chalk';
-import inquirer from 'inquirer';
-import express from 'express';
-import bodyParser from 'body-parser';
-import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import Dashboard from 'webpack-dashboard';
-import DashboardPlugin from 'webpack-dashboard/plugin';
-import detect from 'detect-port';
-import config from '../config/webpack.config';
-import paths from '../config/paths';
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const express = require('express');
+const bodyParser = require('body-parser');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const Dashboard = require('webpack-dashboard');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+const detect = require('detect-port');
+const config = require('../config/webpack.config');
+const paths = require('../config/paths');
 
 let compiler;
 let dashboard;

@@ -17,4 +17,4 @@ WatchMissingNodeModulesPlugin.prototype.apply = function(compiler) {
   });
 };
 
-export default WatchMissingNodeModulesPlugin;
+module.exports = WatchMissingNodeModulesPlugin;

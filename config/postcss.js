@@ -1,6 +1,6 @@
-import paths from './paths';
+const paths = require('./paths');
 
-export default function(bundler) {
+module.exports = function(bundler) {
   return [
     require('postcss-easy-import')({
       addDependencyTo: bundler,
@@ -21,4 +21,4 @@ export default function(bundler) {
     require('postcss-merge-rules'),
     require('css-mqpacker')
   ];
-}
+};

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   babelrc: false,
   cacheDirectory: true,
   presets: [
@@ -19,4 +19,4 @@ export default {
       polyfill: false
     }]
   ]
-}
+};

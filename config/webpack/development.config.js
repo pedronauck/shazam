@@ -1,14 +1,14 @@
-import { join, resolve } from 'path';
-import Config from 'webpack-config';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
-import WatchMissingNodeModulesPlugin from '../../utils/WatchMissingNodeModulesPlugin';
-import paths from '../paths';
-import babelQuery from '../babel.dev';
-import loadConfig from '../../utils/loadConfig';
+const { join, resolve } = require('path');
+const { Config } = require('webpack-config');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const WatchMissingNodeModulesPlugin = require('../../utils/WatchMissingNodeModulesPlugin');
+const paths = require('../paths');
+const babelQuery = require('../babel.dev');
+const loadConfig = require('../../utils/loadConfig');
 
-export default new Config().extend(resolve(__dirname, './base.config.js')).merge({
+module.exports = new Config().extend(resolve(__dirname, './base.config.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
     main: [

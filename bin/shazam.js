@@ -1,7 +1,7 @@
-#!/usr/bin/env babel-node --
+#!/usr/bin/env node
 /* eslint no-unused-expressions: 0, func-names: 0 */
 
-import yargs from 'yargs';
+const yargs = require('yargs');
 
 yargs
   .usage('$0 <cmd> [args]')
