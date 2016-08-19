@@ -12,7 +12,7 @@ module.exports = new Config().extend(resolve(__dirname, './base.config.js')).mer
   devtool: 'source-map',
   entry: {
     main: [
-      require.resolve('./polyfills'),
+      require.resolve('../polyfills'),
       join(paths.app.src, 'main')
     ]
   },
