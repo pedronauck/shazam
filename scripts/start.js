@@ -9,16 +9,13 @@ process.env.NODE_ENV = 'development';
 
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const express = require('express');
-const bodyParser = require('body-parser');
 const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
+const WebpackDevServer = require('webpack-dev-server');
+const historyApiFallback = require('connect-history-api-fallback');
 const Dashboard = require('webpack-dashboard');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const detect = require('detect-port');
 const config = require('../config/webpack.config');
-const paths = require('../config/paths');
 
 let compiler;
 let dashboard;
@@ -30,34 +27,37 @@ const clearConsole = () => process.stdout.write('\x1bc');
 
 const setupCompiler = (port) => {
   compiler = webpack(config, handleCompile);
-  dashboard = new Dashboard();
 
+  dashboard = new Dashboard();
   compiler.apply(new DashboardPlugin(dashboard.setData));
 };
 
-const runDevServer = (port) => {
-  const app = express();
-  const middleware = webpackDevMiddleware(compiler, {
-    publicPath: config.output.publicPath,
-    historyApiFallback: true,
-    quiet: true,
-    watchOptions: { ignored: /node_modules/ }
-  });
-
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(middleware);
-  app.use(webpackHotMiddleware(compiler, {
-    log: () => {}
+const addMiddleware = (devServer) => {
+  devServer.use(historyApiFallback({
+    disableDotRule: true,
+    htmlAcceptHeaders: ['text/html', '*/*']
   }));
 
-  app.get('*', (req, res) => {
-    const file = middleware.fileSystem.readFileSync(`${paths.app.build}/index.html`);
-    res.send(file);
+  devServer.use(devServer.middleware);
+};
+
+const runDevServer = (port) => {
+  const devServer = new WebpackDevServer(compiler, {
+    hot: true,
+    publicPath: config.output.publicPath,
+    quiet: true,
+    watchOptions: {
+      ignored: /node_modules/
+    }
   });
 
-  app.listen(port, 'localhost', (err) => {
-    if (err) console.log(chalk.red(err));
+  addMiddleware(devServer);
+  devServer.listen(port, (err, result) => {
+    if (err) {
+      console.log(chalk.red(err));
+    }
+
+    clearConsole();
     console.log(chalk.cyan(`Server listenning on port ${port}`));
   });
 };

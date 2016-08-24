@@ -13,7 +13,8 @@ module.exports = new Config().extend(resolve(__dirname, './base.config.js')).mer
   entry: {
     main: [
       require.resolve('react-hot-loader/patch'),
-      require.resolve('webpack-hot-middleware/client'),
+      require.resolve('webpack-dev-server/client') + '?/',
+      require.resolve('webpack/hot/dev-server'),
       require.resolve('../polyfills'),
       join(paths.app.stylesheets, 'main'),
       join(paths.app.src, 'main')
