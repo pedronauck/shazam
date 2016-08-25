@@ -42,5 +42,5 @@ exports.envConfig = (env) => ({
 */
 
 exports.htmlData = (env) => ({
-  title: (env === 'development') ? 'Dev Title' : 'Prod Title'
+  title: '%%APP_TITLE%%'
 });
