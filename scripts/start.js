@@ -7,6 +7,7 @@
 
 process.env.NODE_ENV = 'development';
 
+const argv = require('yargs').argv;
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const webpack = require('webpack');
@@ -21,7 +22,7 @@ let compiler;
 let dashboard;
 let handleCompile;
 
-const DEFAULT_PORT = process.env.PORT || 3000;
+const DEFAULT_PORT = argv.port || 3000;
 
 const clearConsole = () => process.stdout.write('\x1bc');
 
