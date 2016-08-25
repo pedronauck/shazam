@@ -1,19 +1,18 @@
 /* eslint no-console: 0 */
 
 const ora = require('ora');
-const { readFileSync, writeFileSync } = require('fs');
 const { prompt } = require('inquirer');
 const { resolve } = require('path');
 const { series } = require('async');
 const { capitalize, kebabCase } = require('lodash');
 const { red, green, blue } = require('chalk');
 const { tick: tickEmoji, cross: crossEmoji, pointer } = require('figures');
-const { mkdir, test, exit, exec, find, ls, cd, cp, mv } = require('shelljs');
+const { mkdir, test, exit, exec, find, ls, cd, cp, mv, sed } = require('shelljs');
 
 const tick = green(tickEmoji);
 const cross = red(crossEmoji);
 
-const TEMPLATE_DIR = resolve(__dirname, '../template');
+const TEMPLATE_PATH = resolve(__dirname, '../template');
 
 const DEPENDENCIES = [
   '@drvem/components',
@@ -41,31 +40,34 @@ const DEV_DEPENDENCIES = [
   'react-hot-loader@3.0.0-beta.2'
 ];
 
-const APP_FOLDERS = [
-  'app',
-  'app/actions',
-  'app/components',
-  'app/components/shared',
-  'app/constants',
-  'app/layouts',
-  'app/reducers',
-  'app/utils',
-  'app/views',
-];
-
 const fullPath = (pathname) => resolve(process.cwd(), pathname);
 
-const createAppStructure = (appPath, cb) => {
+const logFiles = (pathname) =>
+  find('-RA', pathname)
+    .forEach(file => console.log(`${tick} ${file.replace(process.cwd(), '.')}`));
+
+const copyDevFiles = (appFullPath) => {
+  ls(TEMPLATE_PATH)
+    .filter(file => /^_/.test(file))
+    .forEach((copiedFile) => {
+      cp(`${TEMPLATE_PATH}/${copiedFile}`, appFullPath);
+      mv(`${appFullPath}/${copiedFile}`, `${appFullPath}/${copiedFile.replace('_', '.')}`);
+    });
+};
+
+const copyAppTemplate = (appPath, answers, cb) => {
   const appFullPath = fullPath(appPath);
+  const pathExists = !test('-d', appFullPath);
 
-  if (!test('-d', appFullPath)) {
+  console.log(blue(`\n${pointer} Generating app folder and files...`));
+
+  if (pathExists) {
     mkdir('-p', appFullPath);
-    cd(appFullPath);
-    mkdir('-p', APP_FOLDERS);
-    cd('../');
+    cp('-R', `${TEMPLATE_PATH}/app`, fullPath(appPath));
+    sed('-i', /%%APP_TITLE%%/, answers.appTitle, `${appFullPath}/app/layouts/App.js`);
 
-    console.log(blue(`${pointer} Creating app structure...`));
-    APP_FOLDERS.forEach(folder => console.log(`${tick} ./${appPath}/${folder}`));
+    copyDevFiles(appFullPath);
+    logFiles(appFullPath);
 
     cb();
   } else {
@@ -74,68 +76,48 @@ const createAppStructure = (appPath, cb) => {
   }
 };
 
-const copyMainComponents = (appPath, cb) => {
-  cp('-R', `${TEMPLATE_DIR}/app`, fullPath(appPath));
-  cb();
-};
-
 const addAssets = (appPath, cb) => {
   const appFullPath = fullPath(appPath);
   const folders = ['components', 'layouts', 'mixins', 'views'];
 
-  console.log(blue(`\n${pointer} Adding assets folders and files...`));
+  console.log(blue(`\n${pointer} Adding assets...`));
 
-  cp('-R', `${TEMPLATE_DIR}/assets`, `${appFullPath}`);
+  cp('-R', `${TEMPLATE_PATH}/assets`, `${appFullPath}`);
   mkdir(`${appFullPath}/assets/images`);
   mkdir(`${appFullPath}/assets/media`);
   mkdir(folders.map(folder => `${appFullPath}/assets/stylesheets/${folder}`));
-
-  find(`${appFullPath}/assets/*`).forEach(file =>
-    console.log(`${tick} ${file.replace(process.cwd(), '.')}`));
+  logFiles(`${appFullPath}/assets/*`);
 
   cb();
 };
 
-const copyBaseFiles = (appPath, cb) => {
-  console.log(blue(`\n${pointer} Copying base files...`));
-
+const copyConfigFile = (filename, appPath, cb) => {
   const appFullPath = fullPath(appPath);
+  const newFilename = filename.replace('.tpl', '');
+  const filepath = `${appFullPath}/${newFilename}`;
 
-  ls(TEMPLATE_DIR)
-    .filter(file => /^_/.test(file))
-    .forEach((copiedFile) => {
-      const filename = copiedFile.replace('_', '.');
+  console.log(blue(`\n${pointer} Creating ${filename} file...`))
+  console.log(`${tick} ${filepath.replace(process.cwd(), '.')}`);
 
-      cp(`${TEMPLATE_DIR}/${copiedFile}`, appFullPath);
-      mv(`${appFullPath}/${copiedFile}`, `${appFullPath}/${filename}`);
+  cp(`${TEMPLATE_PATH}/${filename}`, appFullPath);
+  mv(`${appFullPath}/${filename}`, filepath);
 
-      console.log(`${tick} ./${appPath}/${filename}`);
-    });
-
-  cb();
+  cb(filepath);
 };
 
-const createPackageJSON = (appPath, answers, cb) => {
-  const appFullPath = fullPath(appPath);
-  const template = readFileSync(`${TEMPLATE_DIR}/package.tpl.json`)
-    .toString()
-    .replace('%%APP_NAME%%', answers.appName)
-    .replace('%%APP_DESCRIPTION%%', answers.appDescription)
-    .replace(/%%GITHUB_USER_AND_REPO%%/gm, `${answers.gitUser}/${answers.appName}`);
+const createConfigFiles = (appPath, answers, cb) => {
+  const gitRepo = `${answers.gitUser}/${answers.appName}`;
 
-  console.log(blue(`\n${pointer} Setup your package.json...`))
-  writeFileSync(`${appFullPath}/package.json`, template, 'utf-8');
-  console.log(`${tick} ./${appPath}/package.json`);
+  copyConfigFile('package.tpl.json', appPath, (filepath) => {
+    sed('-i', /%%APP_NAME%%/, answers.appName, filepath);
+    sed('-i', /%%APP_DESCRIPTION%%/, answers.appDescription, filepath);
+    sed('-i', /%%GITHUB_USER_AND_REPO%%/gm, gitRepo, filepath);
+  });
 
-  cb();
-};
+  copyConfigFile('shazam.tpl.config.js', appPath, (filepath) => {
+    sed('-i', /%%APP_TITLE%%/, answers.appTitle, filepath);
+  });
 
-const createShazamConfig = (appPath, cb) => {
-  const appFullPath = fullPath(appPath);
-  const filename = 'shazam.tpl.config.js';
-
-  cp(`${TEMPLATE_DIR}/${filename}`, appFullPath);
-  mv(`${appFullPath}/${filename}`, `${appFullPath}/${filename.replace('.tpl', '')}`);
   cb();
 };
 
@@ -171,8 +153,12 @@ const installNpmDependencies = (appPath, cb) => {
 module.exports = function(defaultAppName) {
   const prompts = [{
     type: 'input',
+    name: 'appTitle',
+    message: 'What\'s the title of your project?'
+  },{
+    type: 'input',
     name: 'appName',
-    message: 'What is the name of your project?',
+    message: 'What\'s the name of your project?',
     default: defaultAppName
   }, {
     type: 'input',
@@ -188,12 +174,9 @@ module.exports = function(defaultAppName) {
     const appPath = kebabCase(answers.appName);
 
     series([
-      (cb) => createAppStructure(appPath, cb),
-      (cb) => copyMainComponents(appPath, cb),
+      (cb) => copyAppTemplate(appPath, answers, cb),
       (cb) => addAssets(appPath, cb),
-      (cb) => copyBaseFiles(appPath, cb),
-      (cb) => createPackageJSON(appPath, answers, cb),
-      (cb) => createShazamConfig(appPath, cb),
+      (cb) => createConfigFiles(appPath, answers, cb),
       (cb) => installNpmDependencies(appPath, cb)
     ]);
   });
