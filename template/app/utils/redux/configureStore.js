@@ -3,10 +3,10 @@ import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux'
 import thunkMiddleware from 'redux-thunk';
 import rootReducer from 'reducers';
-import { devToolsEnhancer } from './devtools.js';
-import { loggerMiddleware } from './logger.js';
+import { devToolsEnhancer } from './devtools';
+import { loggerMiddleware } from './logger';
 
-const IS_DEV = process.env.NODE_ENV === 'dev';
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 export default function configureStore() {
   const middleware = applyMiddleware(
