@@ -2,8 +2,8 @@ module.exports = {
   babelrc: false,
   cacheDirectory: true,
   presets: [
-    require.resolve('babel-preset-es2015'),
-    require.resolve('babel-preset-es2016'),
+    require.resolve('babel-preset-latest'),
+    require.resolve('babel-preset-stage-1'),
     require.resolve('babel-preset-react')
   ],
   plugins: [
@@ -16,7 +16,6 @@ module.exports = {
     [require.resolve('babel-plugin-transform-runtime'), {
       helpers: false,
       polyfill: false
-    }],
-    require.resolve('babel-plugin-transform-react-constant-elements')
+    }]
   ]
 };

@@ -4,15 +4,14 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const paths = require('../paths');
-const babelQuery = require('../babel.prod');
 const loadConfig = require('../../utils/loadConfig');
 
-module.exports = new Config().extend(resolve(__dirname, './base.config.js')).merge({
+module.exports = new Config().extend(resolve(__dirname, './common.config.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
     main: [
-      require.resolve('../polyfills'),
+      require.resolve('babel-polyfill'),
       join(paths.app.src, 'main')
     ]
   },
@@ -25,7 +24,7 @@ module.exports = new Config().extend(resolve(__dirname, './base.config.js')).mer
       test: /\.js$/,
       include: paths.app.src,
       loader: 'babel',
-      query: babelQuery
+      query: require('../babel/development')
     }, {
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
