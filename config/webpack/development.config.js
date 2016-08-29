@@ -16,7 +16,7 @@ module.exports = new Config().extend(resolve(__dirname, './common.config.js')).m
     main: [
       require.resolve('babel-polyfill'),
       require.resolve('react-hot-loader/patch'),
-      require.resolve('webpack-dev-server/client') + `http://localhost:${DEFAULT_PORT}`,
+      require.resolve('webpack-dev-server/client') + `?http://localhost:${DEFAULT_PORT}`,
       require.resolve('webpack/hot/only-dev-server'),
       join(paths.app.stylesheets, 'main'),
       join(paths.app.src, 'main')
