@@ -31,15 +31,6 @@ const DEPENDENCIES = [
   'isomorphic-fetch'
 ];
 
-const DEV_DEPENDENCIES = [
-  'eslint',
-  'eslint-plugin-flowtype',
-  'eslint-plugin-react',
-  'eslint-plugin-jsx-a11y',
-  'eslint-plugin-import',
-  'react-hot-loader@3.0.0-beta.2'
-];
-
 const fullPath = (pathname) => resolve(process.cwd(), pathname);
 
 const logFiles = (pathname) =>
@@ -96,7 +87,7 @@ const copyConfigFile = (filename, appPath, cb) => {
   const newFilename = filename.replace('.tpl', '');
   const filepath = `${appFullPath}/${newFilename}`;
 
-  console.log(blue(`\n${pointer} Creating ${filename} file...`))
+  console.log(blue(`\n${pointer} Creating ${newFilename} file...`))
   console.log(`${tick} ${filepath.replace(process.cwd(), '.')}`);
 
   cp(`${TEMPLATE_PATH}/${filename}`, appFullPath);
@@ -144,9 +135,7 @@ const installNpmDependencies = (appPath, cb) => {
 
   console.log(blue(`\n${pointer} Installing npm packages... This may take couple minutes!`));
   installDependencies('dependencies', DEPENDENCIES, () => {
-    installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
-      cb();
-    });
+    cb();
   });
 };
 
