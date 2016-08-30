@@ -8,8 +8,8 @@ module.exports = function(bundler) {
       glob: true
     }),
     require('postcss-assets')({
-      basePath: paths.app.build,
-      loadPaths: ['images/'],
+      basePath: paths.app.images,
+      loadPaths: ['images/', 'media/'],
       cachebuster: true
     }),
     require('postcss-mixins'),
