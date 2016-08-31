@@ -12,7 +12,8 @@ module.exports = new Config().extend(resolve(__dirname, './common.config.js')).m
   entry: {
     main: [
       require.resolve('babel-polyfill'),
-      join(paths.app.src, 'main')
+      join(paths.app.src, 'main'),
+      join(paths.app.stylesheets, 'main')
     ]
   },
   output: {
@@ -35,7 +36,7 @@ module.exports = new Config().extend(resolve(__dirname, './common.config.js')).m
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
-      data: loadConfig('data'),
+      data: loadConfig('htmlData'),
       minify: {
         removeComments: true,
         collapseWhitespace: true,
