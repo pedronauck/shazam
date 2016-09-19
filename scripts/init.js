@@ -16,7 +16,6 @@ const TEMPLATE_PATH = resolve(__dirname, '../template');
 
 const DEPENDENCIES = [
   '@drvem/components',
-  '@drvem/shazam',
   'react',
   'react-dom',
   'react-router',
@@ -29,6 +28,10 @@ const DEPENDENCIES = [
   'redux-logger',
   'humps',
   'isomorphic-fetch'
+];
+
+const DEV_DEPENDENCIES = [
+  '@drvem/shazam'
 ];
 
 const fullPath = (pathname) => resolve(process.cwd(), pathname);
@@ -135,7 +138,9 @@ const installNpmDependencies = (appPath, cb) => {
 
   console.log(blue(`\n${pointer} Installing npm packages... This may take couple minutes!`));
   installDependencies('dependencies', DEPENDENCIES, () => {
-    cb();
+    installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
+      cb();
+    });
   });
 };
 
