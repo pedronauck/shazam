@@ -10,7 +10,7 @@ const loadConfig = require('../../utils/loadConfig');
 
 const DEFAULT_PORT = argv.port || 3000;
 
-module.exports = new Config().extend(resolve(__dirname, './common.config.js')).merge({
+module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
     main: [
@@ -28,11 +28,6 @@ module.exports = new Config().extend(resolve(__dirname, './common.config.js')).m
   },
   module: {
     loaders: [{
-      test: /\.js$/,
-      include: paths.app.src,
-      loader: 'babel',
-      query: require('../babel/development')
-    }, {
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: 'style!css!postcss'

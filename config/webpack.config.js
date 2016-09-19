@@ -6,4 +6,4 @@ environment.setAll({
   env: () => JSON.parse(env['process.env.NODE_ENV'])
 });
 
-module.exports = new Config().extend(resolve(__dirname, './webpack/[env].config.js'));
+module.exports = new Config().extend(resolve(__dirname, './webpack/[env].js'));

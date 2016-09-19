@@ -6,11 +6,15 @@ const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/loadConfig');
 
+const dependencies = Object.keys(require(paths.app.packageJson).dependencies);
+const NODE_ENV = JSON.parse(env['process.env.NODE_ENV']);
+const drvemPackages = dependencies
+  .filter(dep => !dep.search('@drvem'))
+  .map(dep => path.join(paths.app.nodeModules, dep));
+
 const defaultConfig = new Config().merge({
   entry: {
-    vendor: Object
-      .keys(require(paths.app.packageJson).dependencies)
-      .filter(pkg => pkg !== '@drvem/shazam')
+    vendor: Object.keys(require(paths.app.packageJson).dependencies)
   },
   output: {
     path: paths.app.build,
@@ -41,6 +45,11 @@ const defaultConfig = new Config().merge({
       include: paths.app.src,
     }],
     loaders: [{
+      test: /\.js$/,
+      include: [...drvemPackages, paths.app.src],
+      loader: 'babel',
+      query: require(`../babel/${NODE_ENV}`)
+    }, {
       test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
       include: [paths.app.images, paths.app.nodeModules],
       loader: 'file',
@@ -61,6 +70,10 @@ const defaultConfig = new Config().merge({
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
       'CONFIG': JSON.stringify(loadConfig('envConfig'))
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: Infinity
     })
   ],
   eslint: {

@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const paths = require('../paths');
 const loadConfig = require('../../utils/loadConfig');
 
-module.exports = new Config().extend(resolve(__dirname, './common.config.js')).merge({
+module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
@@ -22,11 +22,6 @@ module.exports = new Config().extend(resolve(__dirname, './common.config.js')).m
   },
   module: {
     loaders: [{
-      test: /\.js$/,
-      include: paths.app.src,
-      loader: 'babel',
-      query: require('../babel/development')
-    }, {
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: ExtractTextPlugin.extract('style', 'css?minimize!postcss')
