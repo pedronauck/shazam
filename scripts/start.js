@@ -13,6 +13,7 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const Dashboard = require('webpack-dashboard');
 const DashboardPlugin = require('webpack-dashboard/plugin');
+const { exit } = require('shelljs');
 const config = require('../config/webpack.config');
 
 let compiler;
@@ -40,8 +41,10 @@ const runDevServer = (port) => {
   });
 
   server.listen(port, (err) => {
-    if (err) console.log(chalk.red(err));
-    console.log(chalk.cyan(`Server listenning on port ${port}`));
+    if (err) {
+      console.log(chalk.red(err));
+      exit(1);
+    }
   });
 };
 

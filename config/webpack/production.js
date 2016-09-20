@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const paths = require('../paths');
 const loadConfig = require('../../utils/loadConfig');
 
-module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
+const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
@@ -63,3 +63,5 @@ module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
   ]
 });
+
+module.exports = config.merge(loadConfig('webpackConfig', config));

@@ -10,7 +10,7 @@ const loadConfig = require('../../utils/loadConfig');
 
 const DEFAULT_PORT = argv.port || 3000;
 
-module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
+const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
     main: [
@@ -18,7 +18,6 @@ module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
       require.resolve('react-hot-loader/patch'),
       require.resolve('webpack-dev-server/client') + `?http://localhost:${DEFAULT_PORT}`,
       require.resolve('webpack/hot/only-dev-server'),
-      join(paths.app.stylesheets, 'main'),
       join(paths.app.src, 'main')
     ]
   },
@@ -44,3 +43,5 @@ module.exports = new Config().extend(resolve(__dirname, './common.js')).merge({
     new WatchMissingNodeModulesPlugin(paths.appNodeModules)
   ]
 });
+
+module.exports = config.merge(loadConfig('webpackConfig', config));

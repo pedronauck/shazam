@@ -10,12 +10,13 @@ catch(e) {
   shazamConfig = {};
 }
 
-module.exports = (method) => {
+module.exports = (method, ...rest) => {
   const conf = shazamConfig[method];
   const envName = JSON.parse(env['process.env.NODE_ENV']);
+  const params = rest.length ? [envName, ...rest] : [envName];
 
   if (conf && typeof conf === 'function') {
-    return conf(envName);
+    return conf(...params);
   }
 
   return {};

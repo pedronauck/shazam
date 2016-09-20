@@ -1,18 +1,13 @@
+const _  = require('lodash');
 const path = require('path');
 const webpack = require('webpack');
 const { Config } = require('webpack-config');
-const postcss = require('../postcss');
+const { exit } = require('shelljs');
 const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/loadConfig');
 
-const dependencies = Object.keys(require(paths.app.packageJson).dependencies);
-const NODE_ENV = JSON.parse(env['process.env.NODE_ENV']);
-const drvemPackages = dependencies
-  .filter(dep => !dep.search('@drvem'))
-  .map(dep => path.join(paths.app.nodeModules, dep));
-
-const defaultConfig = new Config().merge({
+module.exports = new Config().merge({
   entry: {
     vendor: Object.keys(require(paths.app.packageJson).dependencies)
   },
@@ -23,15 +18,7 @@ const defaultConfig = new Config().merge({
   resolve: {
     extensions: ['.js', '.css', ''],
     alias: {
-      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
-      'app': paths.app.src,
-      'actions': `${paths.app.src}/actions`,
-      'components': `${paths.app.src}/components`,
-      'constants': `${paths.app.src}/constants`,
-      'layouts': `${paths.app.src}/layouts`,
-      'reducers': `${paths.app.src}/reducers`,
-      'utils': `${paths.app.src}/utils`,
-      'views': `${paths.app.src}/views`
+      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator')
     }
   },
   resolveLoader: {
@@ -46,9 +33,9 @@ const defaultConfig = new Config().merge({
     }],
     loaders: [{
       test: /\.js$/,
-      include: [...drvemPackages, paths.app.src],
+      exclude: /node_modules\/(?!@drvem(components|utils|icons))/,
       loader: 'babel',
-      query: require(`../babel/${NODE_ENV}`)
+      query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
     }, {
       test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
       include: [paths.app.images, paths.app.nodeModules],
@@ -70,17 +57,14 @@ const defaultConfig = new Config().merge({
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
       'CONFIG': JSON.stringify(loadConfig('envConfig'))
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: Infinity
     })
   ],
   eslint: {
     configFile: path.join(__dirname, '../eslint.js'),
     useEslintrc: false
   },
-  postcss
+  postcss(bundler) {
+    const plugins = loadConfig('postcss', bundler);
+    return _.isArray(plugins) ? plugins : exit(1);
+  }
 });
-
-module.exports = defaultConfig.merge(loadConfig('webpackConfig'));
