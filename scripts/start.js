@@ -24,21 +24,31 @@ const DEFAULT_PORT = argv.port || 3000;
 
 const setupCompiler = (port) => {
   compiler = webpack(config, handleCompile);
-  dashboard = new Dashboard();
 
-  compiler.apply(new DashboardPlugin(dashboard.setData));
+  if (argv.dashboard) {
+    dashboard = new Dashboard();
+    compiler.apply(new DashboardPlugin(dashboard.setData));
+  }
 };
 
 const runDevServer = (port) => {
-  const server = new WebpackDevServer(compiler, {
+  const opts = {
     publicPath: config.output.publicPath,
     hot: true,
-    quiet: true,
     historyApiFallback: true,
     watchOptions: {
       ignored: /node_modules/
+    },
+    stats: {
+      colors: true,
+      chunks: false,
+      chunkModules: false
     }
-  });
+  };
+
+  if (argv.dashboard) Object.assign(opts, { quiet: true });
+
+  const server = new WebpackDevServer(compiler, opts);
 
   server.listen(port, (err) => {
     if (err) {
