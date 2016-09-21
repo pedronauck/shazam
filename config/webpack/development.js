@@ -5,9 +5,11 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('../../utils/WatchMissingNodeModulesPlugin');
+const VendorChunkPlugin = require('webpack-vendor-chunk-plugin');
 const paths = require('../paths');
 const loadConfig = require('../../utils/loadConfig');
 
+const { CommonsChunkPlugin } = webpack.optimize;
 const DEFAULT_PORT = argv.port || 3000;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
@@ -38,6 +40,8 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       template: paths.app.htmlFile,
       data: loadConfig('htmlData')
     }),
+    new CommonsChunkPlugin('vendor', 'static/js/vendor.js', Infinity),
+    new VendorChunkPlugin('vendor'),
     new webpack.HotModuleReplacementPlugin(),
     new CaseSensitivePathsPlugin(),
     new WatchMissingNodeModulesPlugin(paths.appNodeModules)

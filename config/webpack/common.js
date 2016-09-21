@@ -33,7 +33,7 @@ module.exports = new Config().merge({
     }],
     loaders: [{
       test: /\.js$/,
-      exclude: /node_modules\/(?!@drvem(components|utils|icons))/,
+      include: [paths.app.src],
       loader: 'babel',
       query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
     }, {
@@ -54,6 +54,7 @@ module.exports = new Config().merge({
     }]
   },
   plugins: [
+    new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
       'CONFIG': JSON.stringify(loadConfig('envConfig'))
