@@ -1,20 +1,34 @@
 const _  = require('lodash');
+const argv = require('yargs').argv;
 const path = require('path');
 const webpack = require('webpack');
 const { Config } = require('webpack-config');
 const { exit } = require('shelljs');
+const VendorChunkPlugin = require('webpack-vendor-chunk-plugin');
 const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/loadConfig');
 
+const { CommonsChunkPlugin } = webpack.optimize;
+
+const IS_DEVELOPMENT = !argv.production;
+const isReactExternals = argv.reactAsExternals;
+const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
+const filteredVendors = vendor.filter(dep => dep !== 'react' || dep !== 'react-dom');
+const externals = [{
+  'react': 'window.React',
+  'react-dom': 'window.ReactDOM'
+}];
+
 module.exports = new Config().merge({
   entry: {
-    vendor: Object.keys(require(paths.app.packageJson).dependencies)
+    vendor: isReactExternals ? filteredVendors : vendor
   },
   output: {
     path: paths.app.build,
     publicPath: '/'
   },
+  externals: isReactExternals ? externals : null,
   resolve: {
     extensions: ['.js', '.css', ''],
     alias: {
@@ -55,6 +69,12 @@ module.exports = new Config().merge({
   },
   plugins: [
     new webpack.optimize.DedupePlugin(),
+    new CommonsChunkPlugin(
+      'vendor',
+      IS_DEVELOPMENT ? 'static/js/vendor.js' : 'static/js/vendor.[chunkhash:8].js',
+      Infinity
+    ),
+    new VendorChunkPlugin('vendor'),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
       'CONFIG': JSON.stringify(loadConfig('envConfig'))

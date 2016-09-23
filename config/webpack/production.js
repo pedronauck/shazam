@@ -3,11 +3,8 @@ const { Config } = require('webpack-config');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const VendorChunkPlugin = require('webpack-vendor-chunk-plugin');
 const paths = require('../paths');
 const loadConfig = require('../../utils/loadConfig');
-
-const { CommonsChunkPlugin } = webpack.optimize;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
@@ -31,6 +28,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     }]
   },
   plugins: [
+    new webpack.optimize.DedupePlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
@@ -62,9 +60,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
         screw_ie8: true
       }
     }),
-    new ExtractTextPlugin('static/css/[name].[contenthash:8].css'),
-    new CommonsChunkPlugin('vendor', 'static/js/vendor.[chunkhash:8].js', Infinity),
-    new VendorChunkPlugin('vendor')
+    new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
   ]
 });
 
