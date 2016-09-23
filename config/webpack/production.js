@@ -60,6 +60,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
         screw_ie8: true
       }
     }),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'static/js/vendor.[chunkhash:8].js', Infinity),
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
   ]
 });

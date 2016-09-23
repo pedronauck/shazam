@@ -9,8 +9,6 @@ const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/loadConfig');
 
-const { CommonsChunkPlugin } = webpack.optimize;
-
 const IS_DEVELOPMENT = !argv.production;
 const isReactExternals = argv.reactAsExternals;
 const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
@@ -69,11 +67,6 @@ module.exports = new Config().merge({
   },
   plugins: [
     new webpack.optimize.DedupePlugin(),
-    new CommonsChunkPlugin(
-      'vendor',
-      IS_DEVELOPMENT ? 'static/js/vendor.js' : 'static/js/vendor.[chunkhash:8].js',
-      Infinity
-    ),
     new VendorChunkPlugin('vendor'),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({

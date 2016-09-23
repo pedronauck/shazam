@@ -38,6 +38,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       template: paths.app.htmlFile,
       data: loadConfig('htmlData')
     }),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'static/js/vendor.js', Infinity),
     new webpack.HotModuleReplacementPlugin(),
     new CaseSensitivePathsPlugin(),
     new WatchMissingNodeModulesPlugin(paths.appNodeModules)
