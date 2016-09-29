@@ -1,6 +1,6 @@
 {
   "name": "@drvem/shazam",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Node module to create and manage react apps",
   "bin": {
     "shazam": "./bin/shazam.js"
