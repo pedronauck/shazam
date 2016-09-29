@@ -9,7 +9,6 @@ const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/loadConfig');
 
-const IS_DEVELOPMENT = !argv.production;
 const isReactExternals = argv.reactAsExternals;
 const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
 const filteredVendors = vendor.filter(dep => dep !== 'react' || dep !== 'react-dom');

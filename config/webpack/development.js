@@ -9,15 +9,18 @@ const paths = require('../paths');
 const loadConfig = require('../../utils/loadConfig');
 
 const DEFAULT_PORT = argv.port || 3000;
+const hasHotLoader = argv.hotLoader;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
     main: [
       require.resolve('babel-polyfill'),
-      require.resolve('react-hot-loader/patch'),
-      require.resolve('webpack-dev-server/client') + `?http://localhost:${DEFAULT_PORT}`,
-      require.resolve('webpack/hot/only-dev-server'),
+      ...hasHotLoader ? [
+        require.resolve('react-hot-loader/patch'),
+        require.resolve('webpack-dev-server/client') + `?http://localhost:${DEFAULT_PORT}`,
+        require.resolve('webpack/hot/only-dev-server'),
+      ] : [],
       join(paths.app.src, 'main')
     ]
   },
@@ -39,7 +42,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       data: loadConfig('htmlData')
     }),
     new webpack.optimize.CommonsChunkPlugin('vendor', 'static/js/vendor.js', Infinity),
-    new webpack.HotModuleReplacementPlugin(),
+    ...hasHotLoader ? [new webpack.HotModuleReplacementPlugin()] : [],
     new CaseSensitivePathsPlugin(),
     new WatchMissingNodeModulesPlugin(paths.appNodeModules)
   ]

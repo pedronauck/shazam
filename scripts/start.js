@@ -21,6 +21,7 @@ let dashboard;
 let handleCompile;
 
 const DEFAULT_PORT = argv.port || 3000;
+const hasHotLoader = argv.hotLoader;
 
 const setupCompiler = (port) => {
   compiler = webpack(config, handleCompile);
@@ -34,7 +35,7 @@ const setupCompiler = (port) => {
 const runDevServer = (port) => {
   const opts = {
     publicPath: config.output.publicPath,
-    hot: true,
+    hot: hasHotLoader,
     historyApiFallback: true,
     watchOptions: {
       ignored: /node_modules/
