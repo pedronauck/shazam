@@ -1,3 +1,4 @@
+const { argv } = require('yargs');
 const { join, resolve } = require('path');
 const { Config } = require('webpack-config');
 const webpack = require('webpack');
@@ -5,6 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const paths = require('../paths');
 const loadConfig = require('../../utils/loadConfig');
+
+const hasCSSModules = argv.cssModules;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
@@ -25,7 +28,14 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: ExtractTextPlugin.extract('style', 'css?minimize!postcss')
-    }]
+    }, ...hasCSSModules ? [{
+      test: /\.css$/,
+      include: [paths.app.src],
+      loader: ExtractTextPlugin.extract(
+        'style',
+        'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss'
+      )
+    }] : []]
   },
   plugins: [
     new webpack.optimize.DedupePlugin(),

@@ -1,6 +1,6 @@
 const { join, resolve } = require('path');
 const { Config } = require('webpack-config');
-const argv = require('yargs').argv;
+const { argv } = require('yargs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -10,6 +10,7 @@ const loadConfig = require('../../utils/loadConfig');
 
 const DEFAULT_PORT = argv.port || 3000;
 const hasHotLoader = argv.hotLoader;
+const hasCSSModules = argv.cssModules;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
@@ -31,7 +32,15 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: 'style!css!postcss'
-    }]
+    }, ...hasCSSModules ? [{
+      test: /\.css$/,
+      include: [paths.app.src],
+      loaders: [
+        'style?sourceMap',
+        'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+        'postcss'
+      ]
+    }] : []]
   },
   plugins: [
     new HtmlWebpackPlugin({
