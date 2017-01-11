@@ -1,7 +1,7 @@
 {
   "name": "@pedronauck/shazam",
   "version": "0.10.0",
-  "description": "Node module to create and manage react apps",
+  "description": "An opinionated and usefull react app management",
   "bin": {
     "shazam": "./bin/shazam.js"
   },
