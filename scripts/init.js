@@ -60,6 +60,7 @@ const checkYarnInstalled = () => {
 
 const logFiles = (pathname) =>
   find('-RA', pathname)
+    .filter(file => !/.DS_Store/.test(file))
     .forEach(file => console.log(`${tick} ${file.replace(process.cwd(), '.')}`));
 
 const copyDevFiles = (appFullPath) => {
@@ -71,17 +72,18 @@ const copyDevFiles = (appFullPath) => {
     });
 };
 
-const copyAppTemplate = (appPath, answers, cb) => {
+const copyAppTemplate = (appPath, { template }, cb) => {
   const appFullPath = fullPath(appPath);
   const pathExists = !test('-d', appFullPath);
-  const appLayoutComp = `${appFullPath}/app/components/layouts/App.js`;
 
   console.log(blue(`\n${pointer} Generating app folder and files...`));
 
   if (pathExists) {
     mkdir('-p', appFullPath);
-    cp('-R', `${TEMPLATE_PATH}/app`, fullPath(appPath));
-    sed('-i', /%%APP_TITLE%%/, answers.appTitle, appLayoutComp);
+    cp('-R', `${TEMPLATE_PATH}/${template}`, appFullPath);
+    mv(`${appFullPath}/${template}/app`, `${appFullPath}/app`);
+    mv(`${appFullPath}/${template}/assets`, `${appFullPath}/assets`);
+    rm('-R', `${appFullPath}/${template}`);
 
     copyDevFiles(appFullPath);
     logFiles(appFullPath);
@@ -94,12 +96,12 @@ const copyAppTemplate = (appPath, answers, cb) => {
   }
 };
 
-const addAssets = (appPath, cb) => {
+const addAssets = (appPath, { template }, cb) => {
   const appFullPath = fullPath(appPath);
 
   console.log(blue(`\n${pointer} Adding assets...`));
 
-  cp('-R', `${TEMPLATE_PATH}/assets`, `${appFullPath}`);
+  cp('-R', `${TEMPLATE_PATH}/${template}/assets`, `${appFullPath}`);
   mkdir(`${appFullPath}/assets/media`);
   logFiles(`${appFullPath}/assets/*`);
 
@@ -197,6 +199,17 @@ module.exports = function(defaultAppName) {
     name: 'gitUser',
     message: 'The owner of your repository on Git:',
     default: IS_DEBUGGING ? 'pedronauck' : ''
+  }, {
+    type: 'list',
+    name: 'template',
+    message: 'Which type of template you whant to use?',
+    choices: [{
+      name: 'Pure React',
+      value: 'default'
+    }, {
+      name: 'React with Router and Redux',
+      value: 'with-router-redux'
+    }]
   }];
 
   prompt(prompts).then((answers) => {
@@ -204,7 +217,7 @@ module.exports = function(defaultAppName) {
 
     series([
       (cb) => copyAppTemplate(appPath, answers, cb),
-      (cb) => addAssets(appPath, cb),
+      (cb) => addAssets(appPath, answers, cb),
       (cb) => createConfigFiles(appPath, answers, cb),
       (cb) => installDependencies(appPath, cb)
     ]);

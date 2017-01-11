@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { changeName } from 'ducks/superhero';
 import styles from './Home.css';
 
-const Dashboard = ({ superhero, changeName }) => (
+const Home = ({ superhero, changeName }) => (
   <div>
     <h2 className={styles.title}>Welcome {superhero}</h2>
     <p className={styles.subtitle}>
@@ -18,4 +18,4 @@ const Dashboard = ({ superhero, changeName }) => (
 
 const mapStateToProps = ({ superhero }) => ({ superhero });
 
-export default connect(mapStateToProps, { changeName })(Dashboard);
+export default connect(mapStateToProps, { changeName })(Home);
