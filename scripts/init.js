@@ -46,7 +46,7 @@ const DEPENDENCIES = [
 
 const DEV_DEPENDENCIES = [
   'postcss-cssnext',
-  ...!IS_DEBUGGING ? ['@pedronauck/shazam'] : []
+  ...!IS_DEBUGGING ? ['shazamjs'] : []
 ];
 
 const fullPath = (pathname) => resolve(process.cwd(), pathname);

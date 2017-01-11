@@ -16,6 +16,6 @@
   },
   "homepage": "https://github.com/<%= GITHUB_USER_AND_REPO %>#readme"<% if (IS_DEBUGGING) { %>,
   "devDependencies": {
-    "@pedronauck/shazam": "file:../"
+    "shazamjs": "file:../"
   }<% } %>
 }
