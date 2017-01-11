@@ -1,63 +1,63 @@
 const _  = require('lodash');
-const argv = require('yargs').argv;
-const path = require('path');
 const webpack = require('webpack');
 const { Config } = require('webpack-config');
-const { exit } = require('shelljs');
-const VendorChunkPlugin = require('webpack-vendor-chunk-plugin');
+const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+
 const paths = require('../paths');
 const env = require('../env');
-const loadConfig = require('../../utils/loadConfig');
+const loadConfig = require('../../utils/load-config');
 
-const isReactExternals = argv.reactAsExternals;
-const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
-const filteredVendors = vendor.filter(dep => dep !== 'react' || dep !== 'react-dom');
-const externals = [{
-  'react': 'window.React',
-  'react-dom': 'window.ReactDOM'
-}];
+const PUBLIC_URL = process.env.PUBLIC_URL || '';
+const PUBLIC_PATH = '/';
 
 module.exports = new Config().merge({
-  entry: {
-    vendor: isReactExternals ? filteredVendors : vendor
-  },
   output: {
+    pathinfo: true,
     path: paths.app.build,
-    publicPath: '/'
+    publicPath: PUBLIC_PATH
   },
-  externals: isReactExternals ? externals : null,
   resolve: {
-    extensions: ['.js', '.css', ''],
+    extensions: ['.js', '.css'],
+    modules: [
+      paths.app.src,
+      paths.app.nodeModules,
+      paths.app.assets
+    ],
+    moduleExtensions: ["*-loader"],
     alias: {
-      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator')
+      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
     }
   },
-  resolveLoader: {
-    root: paths.nodeModules,
-    moduleTemplates: ['*-loader']
-  },
   module: {
-    preLoaders: [{
-      test: /\.js$/,
-      loader: 'eslint',
-      include: paths.app.src,
-    }],
-    loaders: [{
+    rules: [{
       test: /\.js$/,
       include: [paths.app.src],
-      loader: 'babel',
-      query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
+      use: [{
+        loader: 'babel-loader',
+        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
+      }, {
+        loader: 'eslint-loader'
+      }]
     }, {
-      test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)(\?.*)?$/,
+      test: /\.svg$/,
+      loader: 'file-loader',
       include: [paths.app.images, paths.app.nodeModules],
-      loader: 'file',
       query: {
         name: 'static/media/[name].[hash:8].[ext]'
       }
     }, {
-      test: /\.(mp4|webm)(\?.*)?$/,
-      include: [paths.app.media, paths.app.nodeModules],
-      loader: 'url',
+      test: /\.json$/,
+      loader: 'json-loader'
+    }, {
+      exclude: [
+        /\.ejs$/,
+        /\.html$/,
+        /\.(js|jsx)$/,
+        /\.css$/,
+        /\.json$/,
+        /\.svg$/
+      ],
+      loader: 'url-loader',
       query: {
         limit: 10000,
         name: 'static/media/[name].[hash:8].[ext]'
@@ -65,19 +65,19 @@ module.exports = new Config().merge({
     }]
   },
   plugins: [
-    new webpack.optimize.DedupePlugin(),
-    new VendorChunkPlugin('vendor'),
+    new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
       'CONFIG': JSON.stringify(loadConfig('envConfig'))
+    }),
+    new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
+    new webpack.LoaderOptionsPlugin({
+      test: /\.css$/,
+      options: {
+        postcss(bundler) {
+          return loadConfig('postcss', bundler) || [];
+        }
+      }
     })
-  ],
-  eslint: {
-    configFile: path.join(__dirname, '../eslint.js'),
-    useEslintrc: false
-  },
-  postcss(bundler) {
-    const plugins = loadConfig('postcss', bundler);
-    return _.isArray(plugins) ? plugins : exit(1);
-  }
+  ]
 });

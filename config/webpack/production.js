@@ -4,19 +4,22 @@ const { Config } = require('webpack-config');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const paths = require('../paths');
-const loadConfig = require('../../utils/loadConfig');
 
-const hasCSSModules = argv.cssModules;
+const paths = require('../paths');
+const loadConfig = require('../../utils/load-config');
+const cssModulesLoader = require('../../utils/css-module-loaders');
+
+const hasCSSModules = !argv.noCssModules;
+const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
+    vendor,
     main: [
       require.resolve('babel-polyfill'),
-      join(paths.app.src, 'main'),
-      join(paths.app.stylesheets, 'main')
+      join(paths.app.src, 'main')
     ]
   },
   output: {
@@ -24,17 +27,20 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js'
   },
   module: {
-    loaders: [{
+    rules: [{
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
-      loader: ExtractTextPlugin.extract('style', 'css?minimize!postcss')
+      loader: ExtractTextPlugin.extract({
+        fallbackLoader: 'style-loader',
+        loader: 'css-loader?minimize-loader!postcss-loader'
+      })
     }, ...hasCSSModules ? [{
       test: /\.css$/,
       include: [paths.app.src],
-      loader: ExtractTextPlugin.extract(
-        'style',
-        'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss'
-      )
+      loader: ExtractTextPlugin.extract({
+        fallbackLoader: 'style-loader',
+        loader: cssModulesLoader
+      })
     }] : []]
   },
   plugins: [
@@ -56,22 +62,33 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
         minifyURLs: true
       }
     }),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'static/js/vendor.[chunkhash:8].js',
+      minChunks: Infinity
+    }),
+    new ExtractTextPlugin('static/css/[name].[contenthash:8].css'),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
+        warnings: false,
         screw_ie8: true,
-        warnings: false
-      },
-      mangle: {
-        screw_ie8: true
+        conditionals: true,
+        unused: true,
+        comparisons: true,
+        sequences: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true,
       },
       output: {
-        comments: false,
-        screw_ie8: true
-      }
+        comments: false
+      },
     }),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'static/js/vendor.[chunkhash:8].js', Infinity),
-    new ExtractTextPlugin('static/css/[name].[contenthash:8].css')
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      debug: false
+    })
   ]
 });
 

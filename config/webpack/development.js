@@ -4,22 +4,22 @@ const { argv } = require('yargs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const WatchMissingNodeModulesPlugin = require('../../utils/WatchMissingNodeModulesPlugin');
-const paths = require('../paths');
-const loadConfig = require('../../utils/loadConfig');
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 
-const DEFAULT_PORT = argv.port || 3000;
-const hasHotLoader = argv.hotLoader;
-const hasCSSModules = argv.cssModules;
+const paths = require('../paths');
+const loadConfig = require('../../utils/load-config');
+const cssModulesLoader = require('../../utils/css-module-loaders');
+
+const hasCSSModules = !argv.noCssModules;
+const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
+    vendor,
     main: [
       require.resolve('babel-polyfill'),
-      ...hasHotLoader ? [require.resolve('react-hot-loader/patch')] : [],
-      require.resolve('webpack-dev-server/client') + `?http://localhost:${DEFAULT_PORT}`,
-      require.resolve('webpack/hot/only-dev-server'),
+      require.resolve('react-dev-utils/webpackHotDevClient'),
       join(paths.app.src, 'main')
     ]
   },
@@ -28,30 +28,37 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     filename: 'static/js/[name].js'
   },
   module: {
-    loaders: [{
+    rules: [{
       test: /\.css$/,
-      include: [paths.app.stylesheets, paths.app.nodeModules],
-      loader: 'style!css!postcss'
+      include: [paths.app.stylesheets],
+      loader: 'style-loader!css-loader!postcss-loader'
     }, ...hasCSSModules ? [{
       test: /\.css$/,
       include: [paths.app.src],
-      loaders: [
-        'style?sourceMap',
-        'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
-        'postcss'
-      ]
+      use: [{
+        loader: 'style-loader',
+        options: {
+          sourceMap: true
+        }
+      }].concat(cssModulesLoader)
     }] : []]
+  },
+  performance: {
+    hints: false
   },
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,
-      template: paths.app.htmlFile,
-      data: loadConfig('htmlData')
+      template: paths.app.htmlFile
     }),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'static/js/vendor.js', Infinity),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'static/js/vendor.js',
+      minChunks: Infinity
+    }),
     new webpack.HotModuleReplacementPlugin(),
-    new CaseSensitivePathsPlugin(),
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+    new WatchMissingNodeModulesPlugin(paths.appNodeModule),
+    new CaseSensitivePathsPlugin()
   ]
 });
 
