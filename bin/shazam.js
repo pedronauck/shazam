@@ -3,12 +3,26 @@
 
 const yargs = require('yargs');
 
+const commonArgs = {
+  'port': {
+    alias: 'p',
+    default: 3000
+  }
+};
+
+const start = Object.assign({}, commonArgs, {
+  'no-css-modules': {
+    alias: 'ncm',
+    default: false
+  }
+});
+
 yargs
   .usage('$0 <cmd> [args]')
-  .command('init [name]', 'create app structure', {}, (argv) => {
+  .command('init [name]', 'create app structure', commonArgs, (argv) => {
     require('../scripts/init')(argv.name);
   })
-  .command('start', 'run development server', {}, (argv) => {
+  .command('start', 'run development server', start, (argv) => {
     require('../scripts/start')();
   })
   .command('build', 'build production version of app', {}, (argv) => {
