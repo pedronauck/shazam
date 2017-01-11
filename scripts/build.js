@@ -20,10 +20,16 @@ const webpack = require('webpack');
 const recursive = require('recursive-readdir');
 const stripAnsi = require('strip-ansi');
 const { exit } = require('shelljs');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+
 const config = require('../config/webpack.config');
 const paths = require('../config/paths');
 
 const gzipSize = require('gzip-size').sync;
+
+if (!checkRequiredFiles([paths.app.htmlFile, paths.app.mainJSFile])) {
+  exit(1);
+}
 
 const removeFileNameHash = (fileName) =>
   fileName

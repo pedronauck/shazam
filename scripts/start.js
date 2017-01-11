@@ -7,35 +7,92 @@
 
 process.env.NODE_ENV = 'development';
 
-const argv = require('yargs').argv;
+const { argv } = require('yargs');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const { exit } = require('shelljs');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+
 const config = require('../config/webpack.config');
+const paths = require('../config/paths');
 
 let compiler;
-let dashboard;
 let handleCompile;
 
-const DEFAULT_PORT = argv.port || 3000;
+const DEFAULT_PORT = argv.port;
+
+if (!checkRequiredFiles([paths.app.htmlFile, paths.app.mainJSFile])) {
+  exit(1);
+}
 
 const setupCompiler = (port) => {
   compiler = webpack(config, handleCompile);
 
-  if (argv.dashboard) {
-    dashboard = new Dashboard();
-    compiler.apply(new DashboardPlugin(dashboard.setData));
-  }
+  compiler.plugin('invalid', function() {
+    console.log('Compiling...');
+  });
+
+  let isFirstCompile = true;
+
+  compiler.plugin('done', function(stats) {
+    const messages = formatWebpackMessages(stats.toJson({}, true));
+    const isSuccessful = !messages.errors.length && !messages.warnings.length;
+    const showInstructions = isSuccessful && (isFirstCompile);
+
+    if (isSuccessful) {
+      console.log(chalk.green('Compiled successfully!'));
+    }
+
+    if (showInstructions) {
+      console.log();
+      console.log('The app is running at:');
+      console.log();
+      console.log('  ' + chalk.cyan(`http://localhost:${DEFAULT_PORT}/`));
+      console.log();
+      console.log('Note that the development build is not optimized.');
+      console.log('To create a production build, use ' + chalk.cyan('yarn run build') + '.');
+      console.log();
+
+      isFirstCompile = false;
+    }
+
+    if (messages.errors.length) {
+      console.log(chalk.red('Failed to compile.'));
+      console.log();
+
+      messages.errors.forEach(message => {
+        console.log(message);
+        console.log();
+      });
+
+      return;
+    }
+
+    if (messages.warnings.length) {
+      console.log(chalk.yellow('Compiled with warnings.'));
+      console.log();
+
+      messages.warnings.forEach(message => {
+        console.log(message);
+        console.log();
+      });
+
+      console.log('You may use special comments to disable some warnings.');
+      console.log('Use ' + chalk.yellow('// eslint-disable-next-line') + ' to ignore the next line.');
+      console.log('Use ' + chalk.yellow('/* eslint-disable */') + ' to ignore all warnings in a file.');
+    }
+  });
 };
 
 const runDevServer = (port) => {
   const opts = {
+    compress: true,
+    contentBase: paths.app.assets,
+    clientLogLevel: 'none',
     publicPath: config.output.publicPath,
-    hot: true,
-    historyApiFallback: true,
+    quiet: true,
     watchOptions: {
       ignored: /node_modules/
     },
@@ -45,8 +102,6 @@ const runDevServer = (port) => {
       chunkModules: false
     }
   };
-
-  if (argv.dashboard) Object.assign(opts, { quiet: true });
 
   const server = new WebpackDevServer(compiler, opts);
 

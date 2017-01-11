@@ -1,40 +1,62 @@
 /* eslint no-console: 0 */
 
+const _ = require('lodash');
+const fs = require('fs');
 const ora = require('ora');
+const { argv } = require('yargs');
 const { prompt } = require('inquirer');
 const { resolve } = require('path');
 const { series } = require('async');
 const { capitalize, kebabCase } = require('lodash');
 const { red, green, blue } = require('chalk');
 const { tick: tickEmoji, cross: crossEmoji, pointer } = require('figures');
-const { mkdir, test, exit, exec, find, ls, cd, cp, mv, sed } = require('shelljs');
+const {
+  mkdir,
+  test,
+  exit,
+  exec,
+  find,
+  ls,
+  cd,
+  cp,
+  mv,
+  sed,
+  cat,
+  rm,
+  which
+} = require('shelljs');
 
 const tick = green(tickEmoji);
 const cross = red(crossEmoji);
 
+const DEFAULT_PORT = argv.port;
+const IS_DEBUGGING = process.env.DEBUG;
 const TEMPLATE_PATH = resolve(__dirname, '../template');
 
 const DEPENDENCIES = [
-  '@drvem/components',
   'react',
   'react-dom',
   'react-router',
-  'react-addons-perf',
   'react-redux',
   'react-router-redux',
   'redux',
-  'redux-ignore',
   'redux-thunk',
-  'redux-logger',
-  'humps',
-  'isomorphic-fetch'
+  'redux-logger'
 ];
 
 const DEV_DEPENDENCIES = [
-  '@drvem/shazam'
+  'postcss-cssnext',
+  ...!IS_DEBUGGING ? ['@pedronauck/shazam'] : []
 ];
 
 const fullPath = (pathname) => resolve(process.cwd(), pathname);
+
+const checkYarnInstalled = () => {
+  if (!which('yarn')) {
+    console.log(red('Sorry, you need to install Yarn package manager'));
+    exit(1);
+  }
+};
 
 const logFiles = (pathname) =>
   find('-RA', pathname)
@@ -52,19 +74,21 @@ const copyDevFiles = (appFullPath) => {
 const copyAppTemplate = (appPath, answers, cb) => {
   const appFullPath = fullPath(appPath);
   const pathExists = !test('-d', appFullPath);
+  const appLayoutComp = `${appFullPath}/app/components/layouts/App.js`;
 
   console.log(blue(`\n${pointer} Generating app folder and files...`));
 
   if (pathExists) {
     mkdir('-p', appFullPath);
     cp('-R', `${TEMPLATE_PATH}/app`, fullPath(appPath));
-    sed('-i', /%%APP_TITLE%%/, answers.appTitle, `${appFullPath}/app/layouts/App.js`);
+    sed('-i', /%%APP_TITLE%%/, answers.appTitle, appLayoutComp);
 
     copyDevFiles(appFullPath);
     logFiles(appFullPath);
 
     cb();
-  } else {
+  }
+  else {
     console.log(red(`${pointer} Sorry, this folder already exists!`));
     exit(1);
   }
@@ -72,14 +96,11 @@ const copyAppTemplate = (appPath, answers, cb) => {
 
 const addAssets = (appPath, cb) => {
   const appFullPath = fullPath(appPath);
-  const folders = ['components', 'layouts', 'mixins', 'views'];
 
   console.log(blue(`\n${pointer} Adding assets...`));
 
   cp('-R', `${TEMPLATE_PATH}/assets`, `${appFullPath}`);
-  mkdir(`${appFullPath}/assets/images`);
   mkdir(`${appFullPath}/assets/media`);
-  mkdir(folders.map(folder => `${appFullPath}/assets/stylesheets/${folder}`));
   logFiles(`${appFullPath}/assets/*`);
 
   cb();
@@ -99,56 +120,68 @@ const copyConfigFile = (filename, appPath, cb) => {
   cb(filepath);
 };
 
+const compileTemplateFile = (data) => (filepath) => {
+  const fileStr = cat(filepath);
+  const compiled = _.template(fileStr);
+  const result = compiled(data);
+
+  rm(filepath);
+  fs.writeFileSync(filepath, result, 'utf-8');
+};
+
 const createConfigFiles = (appPath, answers, cb) => {
   const gitRepo = `${answers.gitUser}/${answers.appName}`;
 
-  copyConfigFile('package.tpl.json', appPath, (filepath) => {
-    sed('-i', /%%APP_NAME%%/, answers.appName, filepath);
-    sed('-i', /%%APP_DESCRIPTION%%/, answers.appDescription, filepath);
-    sed('-i', /%%GITHUB_USER_AND_REPO%%/gm, gitRepo, filepath);
-  });
+  copyConfigFile('package.tpl.json', appPath, compileTemplateFile({
+    APP_NAME: answers.appName,
+    APP_DESCRIPTION: answers.appDescription,
+    GITHUB_USER_AND_REPO: gitRepo,
+    IS_DEBUGGING
+  }));
 
-  copyConfigFile('shazam.tpl.config.js', appPath, (filepath) => {
-    sed('-i', /%%APP_TITLE%%/, answers.appTitle, filepath);
-  });
+  copyConfigFile('shazam.tpl.config.js', appPath, compileTemplateFile({
+    APP_TITLE: answers.appTitle,
+    DEFAULT_PORT
+  }));
 
   cb();
 };
 
-const installDependencies = (type, dependencies, cb) => {
+const yarnInstall = (type, dependencies, cb) => {
   const spinner = ora(`Downloading ${type}`).start();
-  const flag = type === 'dependencies' ? '--save' : '--save-dev';
-  const cmd = `npm i ${flag} ${dependencies.join(' ')}`;
+  const flag = type === 'dependencies' ? '' : '--dev';
+  const cmd = `yarn add ${dependencies.join(' ')} ${flag}`;
 
-  exec(cmd, { silent: true }, (code) => {
+  checkYarnInstalled();
+  exec(cmd, { silent: true }, (code, stdout, stderr) => {
     if (code === 0) {
       spinner.text = `${capitalize(type)} installed successfuly`;
       spinner.succeed();
       cb();
     }
     else {
-      console.log(red(`${cross} Sorry, something wrong happened!`))
+      console.log(red(`${cross} Sorry, something wrong happened!\n`))
+      console.log(stderr);
       exit(0);
     }
   })
 };
 
-const installNpmDependencies = (appPath, cb) => {
+const installDependencies = (appPath, cb) => {
   cd(fullPath(appPath));
 
-  console.log(blue(`\n${pointer} Installing npm packages... This may take couple minutes!`));
-  installDependencies('dependencies', DEPENDENCIES, () => {
-    installDependencies('devDependencies', DEV_DEPENDENCIES, () => {
-      cb();
-    });
-  });
+  console.log(blue(`\n${pointer} Installing dependencies... This may take couple minutes!`));
+
+  yarnInstall('dependencies', DEPENDENCIES, () =>
+    yarnInstall('devDependencies', DEV_DEPENDENCIES, () => cb()));
 };
 
 module.exports = function(defaultAppName) {
   const prompts = [{
     type: 'input',
     name: 'appTitle',
-    message: 'What\'s the title of your project?'
+    message: 'What\'s the title of your project?',
+    default: IS_DEBUGGING ? 'Shazam Example' : ''
   },{
     type: 'input',
     name: 'appName',
@@ -157,11 +190,13 @@ module.exports = function(defaultAppName) {
   }, {
     type: 'input',
     name: 'appDescription',
-    message: 'Please type some description:'
+    message: 'Please type some description:',
+    default: IS_DEBUGGING ? 'Just a shazam app example' : ''
   }, {
     type: 'input',
     name: 'gitUser',
-    message: 'The owner of your repository on Git:'
+    message: 'The owner of your repository on Git:',
+    default: IS_DEBUGGING ? 'pedronauck' : ''
   }];
 
   prompt(prompts).then((answers) => {
@@ -171,7 +206,7 @@ module.exports = function(defaultAppName) {
       (cb) => copyAppTemplate(appPath, answers, cb),
       (cb) => addAssets(appPath, cb),
       (cb) => createConfigFiles(appPath, answers, cb),
-      (cb) => installNpmDependencies(appPath, cb)
+      (cb) => installDependencies(appPath, cb)
     ]);
   });
 }
