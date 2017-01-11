@@ -81,9 +81,7 @@ const copyAppTemplate = (appPath, { template }, cb) => {
   if (pathExists) {
     mkdir('-p', appFullPath);
     cp('-R', `${TEMPLATE_PATH}/${template}`, appFullPath);
-    mv(`${appFullPath}/${template}/app`, `${appFullPath}/app`);
-    mv(`${appFullPath}/${template}/assets`, `${appFullPath}/assets`);
-    rm('-R', `${appFullPath}/${template}`);
+    mv(`${appFullPath}/${template}`, `${appFullPath}/app`);
 
     copyDevFiles(appFullPath);
     logFiles(appFullPath);
@@ -96,13 +94,14 @@ const copyAppTemplate = (appPath, { template }, cb) => {
   }
 };
 
-const addAssets = (appPath, { template }, cb) => {
+const addAssets = (appPath, answers, cb) => {
   const appFullPath = fullPath(appPath);
 
   console.log(blue(`\n${pointer} Adding assets...`));
 
-  cp('-R', `${TEMPLATE_PATH}/${template}/assets`, `${appFullPath}`);
+  cp('-R', `${TEMPLATE_PATH}/assets`, `${appFullPath}`);
   mkdir(`${appFullPath}/assets/media`);
+
   logFiles(`${appFullPath}/assets/*`);
 
   cb();
