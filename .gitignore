@@ -3,4 +3,4 @@
 *.log.*
 node_modules
 yarn.lock
-example/node_modules
+example
