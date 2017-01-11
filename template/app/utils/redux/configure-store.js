@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux'
 import thunkMiddleware from 'redux-thunk';
-import rootReducer from 'reducers';
+import rootReducer from 'ducks';
 import { devToolsEnhancer } from './devtools';
 import { loggerMiddleware } from './logger';
 
@@ -22,12 +22,9 @@ export default function configureStore() {
 
   const store = createStore(rootReducer, enhancer);
 
-  if (process.env.NODE_ENV === 'development' && module.hot) {
-    module.hot.accept('../../reducers', () => {
-      const nextReducer = require('../../reducers').default;
-
-      store.replaceReducer(nextReducer);
-    });
+  if (IS_DEV && module.hot) {
+    module.hot.accept('../../ducks', () =>
+      store.replaceReducer(require('../../ducks').default));
   }
 
   return store;

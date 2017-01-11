@@ -1,13 +1,12 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import styles from './Header.css';
 
-const Header = ({ title }) => (
+const Header = () => (
   <header>
-    <h1>{title}</h1>
+    <h1 className={styles.logo}>
+      <img src={require('images/shazam.svg')} width={400} alt="Shazam" />
+    </h1>
   </header>
 );
-
-Header.PropTypes = {
-  title: PropTypes.string
-};
 
 export default Header;

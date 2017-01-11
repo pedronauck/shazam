@@ -1,21 +1,21 @@
 {
-  "name": "%%APP_NAME%%",
+  "name": "<%= APP_NAME %>",
   "version": "0.0.1",
   "private": true,
-  "description": "%%APP_DESCRIPTION%%",
+  "description": "<%= APP_DESCRIPTION %>",
   "scripts": {
     "start": "shazam start",
     "build": "shazam build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/%%GITHUB_USER_AND_REPO%%.git"
+    "url": "git+https://github.com/<%= GITHUB_USER_AND_REPO %>.git"
   },
   "bugs": {
-    "url": "https://github.com/%%GITHUB_USER_AND_REPO%%/issues"
+    "url": "https://github.com/<%= GITHUB_USER_AND_REPO %>/issues"
   },
-  "homepage": "https://github.com/%%GITHUB_USER_AND_REPO%%#readme",
-  "eslintConfig": {
-    "extends": "./node_modules/@drvem/shazam/config/eslint.js"
-  }
+  "homepage": "https://github.com/<%= GITHUB_USER_AND_REPO %>#readme"<% if (IS_DEBUGGING) { %>,
+  "devDependencies": {
+    "@pedronauck/shazam": "file:../"
+  }<% } %>
 }

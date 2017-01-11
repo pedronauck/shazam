@@ -1,16 +1,21 @@
-import React from 'react';
-import { Route, IndexRoute } from 'react-router';
+import { App, NotFound } from 'components/layouts';
+import Home from 'modules/Home';
 
-import AppLayout from 'layouts/App';
-import NotFoundLayout from 'layouts/NotFound';
+const appRoutes = {
+  component: App,
+  childRoutes: [
+    Home
+  ]
+};
 
-import Home from 'views/Home';
+const notFoundRoutes = {
+  path: '*',
+  component: NotFound
+};
 
-const routes = (
-  <Route path="/" component={AppLayout}>
-    <IndexRoute component={Home} />
-    <Route path="*" component={NotFoundLayout} />
-  </Route>
-);
-
-export default routes;
+export default {
+  childRoutes: [
+    appRoutes,
+    notFoundRoutes
+  ]
+};

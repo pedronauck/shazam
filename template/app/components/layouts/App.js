@@ -3,7 +3,7 @@ import Header from 'components/shared/Header';
 
 const App = ({ children }) => (
   <div className="App">
-    <Header title="%%APP_TITLE%%" />
+    <Header />
     {children}
   </div>
 );

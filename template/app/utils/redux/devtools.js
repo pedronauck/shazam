@@ -1,5 +1,3 @@
-const fallBack = (returnableFunction) => returnableFunction;
-
 const hasDevTools = () => {
   const isWindowAnObject = (typeof window === 'object');
   const isDevToolsDefined = (typeof window.devToolsExtension !== 'undefined');
@@ -7,6 +5,6 @@ const hasDevTools = () => {
   return (isWindowAnObject && isDevToolsDefined);
 };
 
-export const devToolsEnhancer = hasDevTools() ? window.devToolsExtension() : fallBack;
+const devToolsEnhancer = hasDevTools() ? window.devToolsExtension() : (f) => f;
 
-export { hasDevTools };
+export { devToolsEnhancer, hasDevTools };

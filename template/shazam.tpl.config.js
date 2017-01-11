@@ -1,3 +1,5 @@
+const cssnext = require('postcss-cssnext');
+
 /*
 *
 * @function webpackConfig
@@ -15,6 +17,28 @@ exports.webpackConfig = (env) => ({
 
 /*
 *
+<<<<<<< HEAD
+* @function postcss
+*
+* @return [ plugins ];
+*
+*/
+
+exports.postcss = () => [
+  cssnext({
+    browsers: [
+      '>1%',
+      'last 4 versions',
+      'Firefox ESR',
+      'not ie < 9', // React doesn't support IE8 anyway
+    ]
+  })
+];
+
+/*
+*
+=======
+>>>>>>> d08e749871b2f338cbbcde622668add1e20c35ce
 * @function envConfig
 *
 * @param { env }
@@ -26,7 +50,7 @@ exports.webpackConfig = (env) => ({
 
 exports.envConfig = (env) => ({
   api: {
-    hostname: 'http://localhost:3000'
+    hostname: 'http://localhost:<%= DEFAULT_PORT %>'
   }
 });
 
@@ -42,5 +66,5 @@ exports.envConfig = (env) => ({
 */
 
 exports.htmlData = (env) => ({
-  title: '%%APP_TITLE%%'
+  TITLE: '<%= APP_TITLE %>'
 });
