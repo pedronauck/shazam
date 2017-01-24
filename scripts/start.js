@@ -87,11 +87,16 @@ const setupCompiler = (port) => {
 };
 
 const runDevServer = (port) => {
-  const opts = {
+  const server = new WebpackDevServer(compiler, {
+    port,
     compress: true,
-    historyApiFallback: true,
+    contentBase: paths.app.build,
     clientLogLevel: 'none',
     publicPath: config.output.publicPath,
+    historyApiFallback: {
+      disableDotRule: true
+    },
+    hot: true,
     quiet: true,
     watchOptions: {
       ignored: /node_modules/
@@ -101,9 +106,7 @@ const runDevServer = (port) => {
       chunks: false,
       chunkModules: false
     }
-  };
-
-  const server = new WebpackDevServer(compiler, opts);
+  });
 
   server.listen(port, (err) => {
     if (err) {
