@@ -89,7 +89,7 @@ const setupCompiler = (port) => {
 const runDevServer = (port) => {
   const opts = {
     compress: true,
-    contentBase: paths.app.assets,
+    historyApiFallback: true,
     clientLogLevel: 'none',
     publicPath: config.output.publicPath,
     quiet: true,
