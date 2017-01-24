@@ -88,7 +88,6 @@ const setupCompiler = (port) => {
 
 const runDevServer = (port) => {
   const server = new WebpackDevServer(compiler, {
-    port,
     compress: true,
     contentBase: paths.app.build,
     clientLogLevel: 'none',
