@@ -1,6 +1,6 @@
 {
   "name": "shazamjs",
-  "version": "0.11.0",
+  "version": "0.11.0-beta.1",
   "description": "An opinionated and usefull react app management",
   "bin": {
     "shazam": "./bin/shazam.js"
