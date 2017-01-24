@@ -1,12 +1,14 @@
 const env = require('../config/env');
 const paths = require('../config/paths');
+const { red } = require('chalk');
 
 let shazamConfig;
 
 try {
   shazamConfig = require(paths.app.shazamConfig);
 }
-catch(e) {
+catch(err) {
+  console.log(red(err));
   shazamConfig = {};
 }
 

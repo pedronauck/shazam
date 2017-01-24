@@ -17,7 +17,6 @@ exports.webpackConfig = (env) => ({
 
 /*
 *
-<<<<<<< HEAD
 * @function postcss
 *
 * @return [ plugins ];
@@ -37,8 +36,6 @@ exports.postcss = () => [
 
 /*
 *
-=======
->>>>>>> d08e749871b2f338cbbcde622668add1e20c35ce
 * @function envConfig
 *
 * @param { env }
