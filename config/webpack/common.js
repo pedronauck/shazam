@@ -1,14 +1,44 @@
 const _  = require('lodash');
 const webpack = require('webpack');
+const { argv } = require('yargs');
 const { Config } = require('webpack-config');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const StatsPlugin = require('stats-webpack-plugin');
+const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 
 const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/load-config');
 
+const DEBUG_BUNDLE = argv.debugBundle;
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const PUBLIC_PATH = '/';
+
+const plugins = [
+  new webpack.NamedModulesPlugin(),
+  new webpack.DefinePlugin(env),
+  new webpack.DefinePlugin({
+    'CONFIG': JSON.stringify(loadConfig('envConfig'))
+  }),
+  new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
+  new webpack.LoaderOptionsPlugin({
+    test: /\.css$/,
+    options: {
+      postcss(bundler) {
+        return loadConfig('postcss', bundler) || [];
+      }
+    }
+  })
+];
+
+if (DEBUG_BUNDLE) {
+  plugins.push(
+    new DuplicatePackageCheckerPlugin(),
+    new StatsPlugin('bundle-stats.json', {
+      chunkModules: true
+    })
+  );
+}
 
 module.exports = new Config().merge({
   output: {
@@ -64,20 +94,5 @@ module.exports = new Config().merge({
       }
     }]
   },
-  plugins: [
-    new webpack.NamedModulesPlugin(),
-    new webpack.DefinePlugin(env),
-    new webpack.DefinePlugin({
-      'CONFIG': JSON.stringify(loadConfig('envConfig'))
-    }),
-    new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
-    new webpack.LoaderOptionsPlugin({
-      test: /\.css$/,
-      options: {
-        postcss(bundler) {
-          return loadConfig('postcss', bundler) || [];
-        }
-      }
-    })
-  ]
+  plugins
 });

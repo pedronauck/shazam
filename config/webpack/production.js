@@ -44,7 +44,6 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     }] : []]
   },
   plugins: [
-    new webpack.optimize.DedupePlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
