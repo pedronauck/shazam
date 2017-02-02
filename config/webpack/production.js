@@ -59,11 +59,6 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
         minifyURLs: true
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'static/js/vendor.[chunkhash:8].js',
-      minChunks: Infinity
-    }),
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css'),
     new webpack.optimize.UglifyJsPlugin({
       compress: {

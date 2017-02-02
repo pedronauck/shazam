@@ -11,6 +11,7 @@ const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/load-config');
 
+const IS_PROD = (process.env.NODE_ENV === 'production');
 const DEBUG_BUNDLE = argv.debugBundle;
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const PUBLIC_PATH = '/';
@@ -102,7 +103,14 @@ if (DEBUG_BUNDLE) {
 if (Array.isArray(vendor)) {
   config.entry = {
     vendor
-  }
+  };
+  config.plugins.push(
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: `static/js/vendor${IS_PROD ? '.[chunkhash:8]' : ''}.js`,
+      minChunks: Infinity
+    })
+  );
 }
 
 module.exports = config;

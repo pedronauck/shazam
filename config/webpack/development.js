@@ -49,11 +49,6 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       inject: true,
       template: paths.app.htmlFile
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'static/js/vendor.js',
-      minChunks: Infinity
-    }),
     new webpack.HotModuleReplacementPlugin(),
     new WatchMissingNodeModulesPlugin(paths.appNodeModule),
     new CaseSensitivePathsPlugin()
