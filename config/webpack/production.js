@@ -10,13 +10,12 @@ const loadConfig = require('../../utils/load-config');
 const cssModulesLoader = require('../../utils/css-module-loaders');
 
 const hasCSSModules = !argv.noCssModules;
-const vendor = Object.keys(require(paths.app.packageJson).dependencies || {});
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
-    vendor,
+    vendor: loadConfig('vendors'),
     main: [
       require.resolve('babel-polyfill'),
       join(paths.app.src, 'main')

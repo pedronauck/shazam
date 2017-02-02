@@ -1,6 +1,21 @@
 const cssnext = require('postcss-cssnext');
 
 /*
+* Scripts that you want to split in a separated bundle called "vendor"
+*/
+
+exports.vendors = [
+  'react',
+  'react-dom',
+  'react-router',
+  'react-redux',
+  'react-router-redux',
+  'redux',
+  'redux-thunk',
+  'redux-logger'
+];
+
+/*
 *
 * @function webpackConfig
 *
