@@ -95,7 +95,7 @@ const runDevServer = (port) => {
   };
 
   if (DEBUG_BUNDLE) {
-    Object.assing(stats, {
+    Object.assign(stats, {
       modules: true,
       modulesSort: "field"
     });
