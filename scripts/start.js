@@ -110,7 +110,7 @@ const runDevServer = (port) => {
       disableDotRule: true
     },
     hot: true,
-    quiet: false,
+    quiet: !DEBUG_BUNDLE,
     watchOptions: {
       ignored: /node_modules/
     },
