@@ -5,6 +5,7 @@ const { Config } = require('webpack-config');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const StatsPlugin = require('stats-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 const paths = require('../paths');
 const env = require('../env');
@@ -21,6 +22,7 @@ const plugins = [
     'CONFIG': JSON.stringify(loadConfig('envConfig'))
   }),
   new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
+  new LodashModuleReplacementPlugin(),
   new webpack.LoaderOptionsPlugin({
     test: /\.css$/,
     options: {
