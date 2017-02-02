@@ -22,6 +22,7 @@ let compiler;
 let handleCompile;
 
 const DEFAULT_PORT = argv.port;
+const DEBUG_BUNDLE = argv.debugBundle;
 
 if (!checkRequiredFiles([paths.app.htmlFile, paths.app.mainJSFile])) {
   exit(1);
@@ -87,6 +88,19 @@ const setupCompiler = (port) => {
 };
 
 const runDevServer = (port) => {
+  const stats = {
+    colors: true,
+    chunks: false,
+    chunkModules: false
+  };
+
+  if (DEBUG_BUNDLE) {
+    Object.assing(stats, {
+      modules: true,
+      modulesSort: "field"
+    });
+  }
+
   const server = new WebpackDevServer(compiler, {
     compress: true,
     contentBase: paths.app.build,
@@ -96,15 +110,11 @@ const runDevServer = (port) => {
       disableDotRule: true
     },
     hot: true,
-    quiet: true,
+    quiet: false,
     watchOptions: {
       ignored: /node_modules/
     },
-    stats: {
-      colors: true,
-      chunks: false,
-      chunkModules: false
-    }
+    stats
   });
 
   server.listen(port, (err) => {

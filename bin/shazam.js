@@ -7,6 +7,10 @@ const commonArgs = {
   'port': {
     alias: 'p',
     default: 3000
+  },
+  'debug-bundle': {
+    alias: 'd',
+    default: false
   }
 };
 
