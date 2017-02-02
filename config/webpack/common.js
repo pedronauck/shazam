@@ -15,34 +15,9 @@ const DEBUG_BUNDLE = argv.debugBundle;
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const PUBLIC_PATH = '/';
 
-const plugins = [
-  new webpack.NamedModulesPlugin(),
-  new webpack.DefinePlugin(env),
-  new webpack.DefinePlugin({
-    'CONFIG': JSON.stringify(loadConfig('envConfig'))
-  }),
-  new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
-  new LodashModuleReplacementPlugin(),
-  new webpack.LoaderOptionsPlugin({
-    test: /\.css$/,
-    options: {
-      postcss(bundler) {
-        return loadConfig('postcss', bundler) || [];
-      }
-    }
-  })
-];
+const vendor = loadConfig('vendors');
 
-if (DEBUG_BUNDLE) {
-  plugins.push(
-    new DuplicatePackageCheckerPlugin(),
-    new StatsPlugin('bundle-stats.json', {
-      chunkModules: true
-    })
-  );
-}
-
-module.exports = new Config().merge({
+const config = new Config().merge({
   output: {
     pathinfo: true,
     path: paths.app.build,
@@ -96,5 +71,38 @@ module.exports = new Config().merge({
       }
     }]
   },
-  plugins
+  plugins: [
+    new webpack.NamedModulesPlugin(),
+    new webpack.DefinePlugin(env),
+    new webpack.DefinePlugin({
+      'CONFIG': JSON.stringify(loadConfig('envConfig'))
+    }),
+    new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
+    new LodashModuleReplacementPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      test: /\.css$/,
+      options: {
+        postcss(bundler) {
+          return loadConfig('postcss', bundler) || [];
+        }
+      }
+    })
+  ]
 });
+
+if (DEBUG_BUNDLE) {
+  config.plugins.push(
+    new DuplicatePackageCheckerPlugin(),
+    new StatsPlugin('bundle-stats.json', {
+      chunkModules: true
+    })
+  );
+}
+
+if (Array.isArray(vendor)) {
+  config.entry = {
+    vendor
+  }
+}
+
+module.exports = config;

@@ -15,7 +15,6 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
   devtool: 'source-map',
   entry: {
-    vendor: loadConfig('vendors'),
     main: [
       require.resolve('babel-polyfill'),
       join(paths.app.src, 'main')

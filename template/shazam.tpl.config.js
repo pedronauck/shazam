@@ -4,7 +4,7 @@ const cssnext = require('postcss-cssnext');
 * Scripts that you want to split in a separated bundle called "vendor"
 */
 
-exports.vendors = [
+exports.vendors = () => [
   'react',
   'react-dom',
   'react-router',

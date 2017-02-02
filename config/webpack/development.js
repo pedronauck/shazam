@@ -15,7 +15,6 @@ const hasCSSModules = !argv.noCssModules;
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
-    vendor: loadConfig('vendors'),
     main: [
       require.resolve('babel-polyfill'),
       require.resolve('react-dev-utils/webpackHotDevClient'),
