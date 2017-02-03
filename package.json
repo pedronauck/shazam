@@ -59,6 +59,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.9.0",
+    "express": "^4.14.1",
     "extract-text-webpack-plugin": "2.0.0-beta.4",
     "figures": "^2.0.0",
     "file-loader": "^0.9.0",
@@ -72,6 +73,7 @@
     "ora": "0.4.1",
     "postcss-loader": "^1.2.1",
     "react-dev-utils": "^0.4.2",
+    "react-hot-loader": "3.0.0-beta.6",
     "recursive-readdir": "^2.1.0",
     "shelljs": "^0.7.4",
     "stats-webpack-plugin": "^0.4.3",
@@ -80,7 +82,8 @@
     "url-loader": "^0.5.7",
     "webpack": "2.2.0",
     "webpack-config": "^6.1.2",
-    "webpack-dev-server": "2.2.0",
+    "webpack-dev-middleware": "^1.10.0",
+    "webpack-hot-middleware": "^2.16.1",
     "yargs": "^6.6.0"
   },
   "engines": {

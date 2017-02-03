@@ -16,8 +16,9 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
   entry: {
     main: [
+      require.resolve('react-hot-loader/patch'),
+      require.resolve('webpack-hot-middleware/client'),
       require.resolve('babel-polyfill'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
       join(paths.app.src, 'main')
     ]
   },

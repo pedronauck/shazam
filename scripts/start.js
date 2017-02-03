@@ -9,11 +9,13 @@ process.env.NODE_ENV = 'development';
 
 const { argv } = require('yargs');
 const chalk = require('chalk');
+const express = require('express');
 const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
 const { exit } = require('shelljs');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const devMiddleware = require('webpack-dev-middleware');
+const hotMiddleware = require('webpack-hot-middleware');
 
 const config = require('../config/webpack.config');
 const paths = require('../config/paths');
@@ -101,23 +103,26 @@ const runDevServer = (port) => {
     });
   }
 
-  const server = new WebpackDevServer(compiler, {
+  const app = express();
+
+  app.use(hotMiddleware(compiler, { log: false }));
+  app.use(devMiddleware(compiler, {
     compress: true,
-    contentBase: paths.app.build,
-    clientLogLevel: 'none',
-    publicPath: config.output.publicPath,
+    noInfo: true,
     historyApiFallback: {
       disableDotRule: true
     },
     hot: true,
     quiet: !DEBUG_BUNDLE,
+    contentBase: paths.app.build,
+    publicPath: config.output.publicPath,
     watchOptions: {
       ignored: /node_modules/
     },
     stats
-  });
+  }));
 
-  server.listen(port, (err) => {
+  app.listen(port, (err) => {
     if (err) {
       console.log(chalk.red(err));
       exit(1);
