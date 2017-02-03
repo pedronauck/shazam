@@ -106,6 +106,7 @@ const runDevServer = (port) => {
 
   const app = express();
 
+  app.use(historyApiFallback());
   app.use(hotMiddleware(compiler, { log: false }));
   app.use(devMiddleware(compiler, {
     compress: true,
