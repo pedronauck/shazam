@@ -17,7 +17,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   entry: {
     main: [
       require.resolve('react-hot-loader/patch'),
-      require.resolve('webpack-hot-middleware/client'),
+      `${require.resolve('webpack-hot-middleware/client')}?quiet=true`,
       require.resolve('babel-polyfill'),
       join(paths.app.src, 'main')
     ]
