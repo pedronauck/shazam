@@ -142,6 +142,7 @@ const createConfigFiles = (appPath, answers, cb) => {
 
   copyConfigFile('shazam.tpl.config.js', appPath, compileTemplateFile({
     APP_TITLE: answers.appTitle,
+    TEMPLATE_TYPE: answers.template,
     DEFAULT_PORT
   }));
 

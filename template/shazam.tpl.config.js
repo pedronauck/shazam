@@ -6,13 +6,13 @@ const cssnext = require('postcss-cssnext');
 
 exports.vendors = () => [
   'react',
-  'react-dom',
+  'react-dom'<% if (TEMPLATE_TYPE === 'with-router-redux') { %>,
   'react-router',
   'react-redux',
   'react-router-redux',
   'redux',
   'redux-thunk',
-  'redux-logger'
+  'redux-logger'<% } %>
 ];
 
 /*
@@ -27,7 +27,7 @@ exports.vendors = () => [
 */
 
 exports.webpackConfig = (env) => ({
-  /* your config */
+  /* your custom webpack config */
 });
 
 /*
