@@ -12,6 +12,7 @@ const chalk = require('chalk');
 const express = require('express');
 const webpack = require('webpack');
 const { exit } = require('shelljs');
+const historyApiFallback = require('connect-history-api-fallback');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const devMiddleware = require('webpack-dev-middleware');
@@ -109,9 +110,6 @@ const runDevServer = (port) => {
   app.use(devMiddleware(compiler, {
     compress: true,
     noInfo: true,
-    historyApiFallback: {
-      disableDotRule: true
-    },
     hot: true,
     quiet: !DEBUG_BUNDLE,
     contentBase: paths.app.build,
