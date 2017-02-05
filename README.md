@@ -4,16 +4,21 @@
 
 # Easy to start
 
-## Install
+First of all, install Shazam globally:
 
-## Creating an app
+```bash
+$ yarn global add shazamjs
+```
 
-# Guide
+Then you can create your app:
 
-## Architecture
+```bash
+$ shazam init <your_app_name>
+```
 
-## Router
+Shazam you ask some things to you and install dependencies. After that you can see your app runing:
 
-## Redux
-
-## CSS Modules
+```bash
+$ cd <your_app_name>
+$ yarn start
+```
