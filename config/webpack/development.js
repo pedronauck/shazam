@@ -10,7 +10,7 @@ const paths = require('../paths');
 const loadConfig = require('../../utils/load-config');
 const cssModulesLoader = require('../../utils/css-module-loaders');
 
-const hasCSSModules = !argv.noCssModules;
+const CSS_MODULES = !argv.noCssModules;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-source-map',
@@ -31,7 +31,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       test: /\.css$/,
       include: [paths.app.stylesheets],
       loader: 'style-loader!css-loader!postcss-loader'
-    }, ...hasCSSModules ? [{
+    }, ...CSS_MODULES ? [{
       test: /\.css$/,
       include: [paths.app.src],
       use: [{

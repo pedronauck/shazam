@@ -16,8 +16,6 @@ const DEBUG_BUNDLE = argv.debugBundle;
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const PUBLIC_PATH = '/';
 
-const vendor = loadConfig('vendors');
-
 const config = new Config().merge({
   output: {
     pathinfo: true,
@@ -78,6 +76,11 @@ const config = new Config().merge({
     new webpack.DefinePlugin({
       'CONFIG': JSON.stringify(loadConfig('envConfig'))
     }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: `static/js/vendor${IS_PROD ? '.[chunkhash:8]' : ''}.js`,
+      minChunks: ({ resource }) => /node_modules/.test(resource)
+    }),
     new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
     new LodashModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
@@ -91,24 +94,11 @@ const config = new Config().merge({
   ]
 });
 
-if (DEBUG_BUNDLE) {
+if (IS_PROD || DEBUG_BUNDLE) {
   config.plugins.push(
     new DuplicatePackageCheckerPlugin(),
     new StatsPlugin('bundle-stats.json', {
       chunkModules: true
-    })
-  );
-}
-
-if (Array.isArray(vendor)) {
-  config.entry = {
-    vendor
-  };
-  config.plugins.push(
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: `static/js/vendor${IS_PROD ? '.[chunkhash:8]' : ''}.js`,
-      minChunks: Infinity
     })
   );
 }
