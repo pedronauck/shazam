@@ -8,6 +8,8 @@
 process.env.NODE_ENV = 'development';
 
 const { argv } = require('yargs');
+const ora = require('ora');
+const emoji = require('node-emoji');
 const chalk = require('chalk');
 const express = require('express');
 const webpack = require('webpack');
@@ -15,6 +17,7 @@ const { exit } = require('shelljs');
 const historyApiFallback = require('connect-history-api-fallback');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const clearConsole = require('react-dev-utils/clearConsole');
 const devMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
 
@@ -32,28 +35,30 @@ if (!checkRequiredFiles([paths.app.htmlFile, paths.app.mainJSFile])) {
 }
 
 const setupCompiler = (port) => {
-  compiler = webpack(config, handleCompile);
+  const spinner = ora(chalk.cyan('Compiling your app...')).start();
+  const url = `http://localhost:${DEFAULT_PORT}/`;
 
-  compiler.plugin('invalid', function() {
-    console.log('Compiling...');
-  });
+  compiler = webpack(config, handleCompile);
+  compiler.plugin('invalid', () => console.log('Compiling...'));
 
   let isFirstCompile = true;
 
-  compiler.plugin('done', function(stats) {
+  compiler.plugin('done', (stats) => {
     const messages = formatWebpackMessages(stats.toJson({}, true));
     const isSuccessful = !messages.errors.length && !messages.warnings.length;
     const showInstructions = isSuccessful && (isFirstCompile);
 
     if (isSuccessful) {
-      console.log(chalk.green('Compiled successfully!'));
+      spinner.succeed();
+      clearConsole();
+      console.log(chalk.yellow(`Shaaaazam ${emoji.get(':zap:')}`));
     }
 
     if (showInstructions) {
       console.log();
       console.log('The app is running at:');
       console.log();
-      console.log('  ' + chalk.cyan(`http://localhost:${DEFAULT_PORT}/`));
+      console.log(`   ${emoji.get(':earth_americas:')}   ` + chalk.cyan(url));
       console.log();
       console.log('Note that the development build is not optimized.');
       console.log('To create a production build, use ' + chalk.cyan('yarn run build') + '.');

@@ -21,7 +21,6 @@ const {
   cd,
   cp,
   mv,
-  sed,
   cat,
   rm,
   which
