@@ -4,8 +4,6 @@ const emoji = require('node-emoji');
 const webpack = require('webpack');
 const { Config } = require('webpack-config');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const StatsPlugin = require('stats-webpack-plugin');
-const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
@@ -74,12 +72,8 @@ const config = new Config().merge({
     }]
   },
   plugins: [
-    new DuplicatePackageCheckerPlugin(),
     new ProgressBarPlugin({
       format: `${hourglass}  Compiling [${chalk.cyan.bold(':bar')}] ${chalk.cyan.bold(':percent')}`
-    }),
-    new StatsPlugin('bundle-stats.json', {
-      chunkModules: true
     }),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
