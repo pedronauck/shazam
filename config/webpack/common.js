@@ -37,13 +37,17 @@ const config = new Config().merge({
   module: {
     rules: [{
       test: /\.js$/,
+      loader: 'eslint-loader',
+      exclude: /node_modules/,
+      enforce: 'pre'
+    },{
+      test: /\.js$/,
       include: [paths.app.src],
       use: [{
         loader: 'babel-loader',
         query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
       }, {
         loader: 'eslint-loader',
-        enforce: 'pre'
       }]
     }, {
       test: /\.svg$/,
