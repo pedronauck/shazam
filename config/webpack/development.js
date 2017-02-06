@@ -30,7 +30,11 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     rules: [{
       test: /\.css$/,
       include: [paths.app.stylesheets],
-      loader: 'style-loader!css-loader!postcss-loader'
+      use: [
+        'style-loader',
+        'css-loader',
+        'postcss-loader'
+      ]
     }, ...CSS_MODULES ? [{
       test: /\.css$/,
       include: [paths.app.src],

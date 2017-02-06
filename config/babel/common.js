@@ -9,6 +9,7 @@ module.exports = {
   ],
   plugins: [
     require.resolve('babel-plugin-lodash'),
+    require.resolve('babel-plugin-syntax-dynamic-import'),
     require.resolve('babel-plugin-syntax-trailing-function-commas'),
     require.resolve('babel-plugin-transform-class-properties'),
     require.resolve('babel-plugin-transform-export-extensions'),

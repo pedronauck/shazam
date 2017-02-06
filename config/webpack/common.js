@@ -42,7 +42,8 @@ const config = new Config().merge({
         loader: 'babel-loader',
         query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
       }, {
-        loader: 'eslint-loader'
+        loader: 'eslint-loader',
+        enforce: 'pre'
       }]
     }, {
       test: /\.svg$/,
@@ -51,9 +52,6 @@ const config = new Config().merge({
       query: {
         name: 'static/media/[name].[hash:8].[ext]'
       }
-    }, {
-      test: /\.json$/,
-      loader: 'json-loader'
     }, {
       exclude: [
         /\.ejs$/,
