@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const ora = require('ora');
+const gitConfig = require('git-config');
 const { argv } = require('yargs');
 const { prompt } = require('inquirer');
 const { resolve } = require('path');
@@ -179,11 +180,11 @@ const installDependencies = (appPath, cb) => {
 };
 
 module.exports = function(defaultAppName) {
+  const config = gitConfig.sync();
   const prompts = [{
     type: 'input',
     name: 'appTitle',
-    message: 'What\'s the title of your project?',
-    default: IS_DEBUGGING ? 'Shazam Example' : ''
+    message: 'What\'s the title of your project?'
   },{
     type: 'input',
     name: 'appName',
@@ -192,13 +193,12 @@ module.exports = function(defaultAppName) {
   }, {
     type: 'input',
     name: 'appDescription',
-    message: 'Please type some description:',
-    default: IS_DEBUGGING ? 'Just a shazam app example' : ''
+    message: 'Please type some description:'
   }, {
     type: 'input',
     name: 'gitUser',
     message: 'The owner of your repository on Git:',
-    default: IS_DEBUGGING ? 'pedronauck' : ''
+    default: config.github.user || 'your_user'
   }, {
     type: 'list',
     name: 'template',
