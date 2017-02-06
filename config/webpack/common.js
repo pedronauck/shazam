@@ -1,18 +1,20 @@
 const _  = require('lodash');
+const chalk = require('chalk');
+const emoji = require('node-emoji');
 const webpack = require('webpack');
-const { argv } = require('yargs');
 const { Config } = require('webpack-config');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const StatsPlugin = require('stats-webpack-plugin');
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 const paths = require('../paths');
 const env = require('../env');
 const loadConfig = require('../../utils/load-config');
+const hourglass = emoji.get(':hourglass:');
 
 const IS_PROD = (process.env.NODE_ENV === 'production');
-const DEBUG_BUNDLE = argv.debugBundle;
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const PUBLIC_PATH = '/';
 
@@ -43,12 +45,11 @@ const config = new Config().merge({
     },{
       test: /\.js$/,
       include: [paths.app.src],
-      use: [{
+      exclude: /node_modules/,
+      use: {
         loader: 'babel-loader',
-        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
-      }, {
-        loader: 'eslint-loader',
-      }]
+        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`),
+      }
     }, {
       test: /\.svg$/,
       loader: 'file-loader',
@@ -73,6 +74,13 @@ const config = new Config().merge({
     }]
   },
   plugins: [
+    new DuplicatePackageCheckerPlugin(),
+    new ProgressBarPlugin({
+      format: `${hourglass}  Compiling [${chalk.cyan.bold(':bar')}] ${chalk.cyan.bold(':percent')}`
+    }),
+    new StatsPlugin('bundle-stats.json', {
+      chunkModules: true
+    }),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
@@ -95,14 +103,5 @@ const config = new Config().merge({
     })
   ]
 });
-
-if (IS_PROD || DEBUG_BUNDLE) {
-  config.plugins.push(
-    new DuplicatePackageCheckerPlugin(),
-    new StatsPlugin('bundle-stats.json', {
-      chunkModules: true
-    })
-  );
-}
 
 module.exports = config;
