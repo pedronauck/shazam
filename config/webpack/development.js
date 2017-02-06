@@ -13,7 +13,7 @@ const cssModulesLoader = require('../../utils/css-module-loaders');
 const CSS_MODULES = !argv.noCssModules;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
-  devtool: 'cheap-module-source-map',
+  devtool: 'cheap-module-eval-source-map',
   entry: {
     main: [
       require.resolve('react-hot-loader/patch'),

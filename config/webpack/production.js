@@ -13,7 +13,7 @@ const hasCSSModules = !argv.noCssModules;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   entry: {
     main: [
       require.resolve('babel-polyfill'),
