@@ -16,7 +16,7 @@ Then you can create your app:
 $ shazam init <your_app_name>
 ```
 
-Shazam you ask some things to you and install dependencies. After that you can see your app runing:
+Shazam will ask some things to you then install dependencies. After that you can see your app runing:
 
 ```bash
 $ cd <your_app_name>
