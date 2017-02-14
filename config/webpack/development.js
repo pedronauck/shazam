@@ -30,6 +30,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     rules: [{
       test: /\.css$/,
       include: [paths.app.stylesheets],
+      exclude: /node_modules/,
       use: [
         'style-loader',
         'css-loader',
@@ -38,6 +39,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     }, ...CSS_MODULES ? [{
       test: /\.css$/,
       include: [paths.app.src],
+      exclude: /node_modules/,
       use: [{
         loader: 'style-loader',
         options: {

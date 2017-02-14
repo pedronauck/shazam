@@ -89,6 +89,7 @@ const config = new Config().merge({
     new LodashModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
       test: /\.css$/,
+      exclude: /node_modules/,
       options: {
         postcss(bundler) {
           return loadConfig('postcss', bundler) || [];
