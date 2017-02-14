@@ -29,13 +29,20 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   module: {
     rules: [{
       test: /\.css$/,
-      include: [paths.app.stylesheets],
+      include: [paths.app.stylesheets, paths.app.nodeModules],
       exclude: /node_modules/,
-      use: [
-        'style-loader',
-        'css-loader',
-        'postcss-loader'
-      ]
+      use: [{
+        loader: 'style-loader'
+      }, {
+        loader: 'css-loader'
+      }, {
+        loader: 'postcss-loader',
+        options: {
+          plugins(bundler) {
+            return loadConfig('postcss', bundler) || [];
+          }
+        }
+      }]
     }, ...CSS_MODULES ? [{
       test: /\.css$/,
       include: [paths.app.src],

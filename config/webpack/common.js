@@ -86,16 +86,7 @@ const config = new Config().merge({
       minChunks: ({ resource }) => /node_modules/.test(resource)
     }),
     new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
-    new LodashModuleReplacementPlugin(),
-    new webpack.LoaderOptionsPlugin({
-      test: /\.css$/,
-      exclude: /node_modules/,
-      options: {
-        postcss(bundler) {
-          return loadConfig('postcss', bundler) || [];
-        }
-      }
-    })
+    new LodashModuleReplacementPlugin()
   ]
 });
 

@@ -11,7 +11,7 @@ const paths = require('../paths');
 const loadConfig = require('../../utils/load-config');
 const cssModulesLoader = require('../../utils/css-module-loaders');
 
-const hasCSSModules = !argv.noCssModules;
+const CSS_MODULES = !argv.noCssModules;
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
@@ -31,15 +31,27 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       test: /\.css$/,
       include: [paths.app.stylesheets, paths.app.nodeModules],
       loader: ExtractTextPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: 'css-loader?minimize-loader!postcss-loader'
+        fallback: 'style-loader',
+        use: [{
+          loader: 'css-loader',
+          options: {
+            minimize: true
+          }
+        }, {
+          loader: 'postcss-loader',
+          options: {
+            plugins(bundler) {
+              return loadConfig('postcss', bundler) || [];
+            }
+          }
+        }]
       })
-    }, ...hasCSSModules ? [{
+    }, ...CSS_MODULES ? [{
       test: /\.css$/,
       include: [paths.app.src],
       loader: ExtractTextPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: cssModulesLoader
+        fallback: 'style-loader',
+        use: cssModulesLoader
       })
     }] : []]
   },
