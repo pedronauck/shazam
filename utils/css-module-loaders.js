@@ -5,7 +5,7 @@ module.exports = [{
   options: {
     modules: true,
     importLoaders: true,
-    localIdentName: '[name]__[local]___[hash:base64:5]'
+    localIdentName: '[folder]_[name]__[local]___[hash:base64:5]'
   }
 }, {
   loader: 'postcss-loader',
