@@ -78,26 +78,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       }
     }),
     new ExtractTextPlugin('static/css/[name].[contenthash:8].css'),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false,
-        screw_ie8: true,
-        conditionals: true,
-        unused: true,
-        comparisons: true,
-        sequences: true,
-        dead_code: true,
-        evaluate: true,
-        if_return: true,
-        join_vars: true,
-      },
-      output: {
-        comments: false
-      },
-    }),
     new webpack.LoaderOptionsPlugin({
-      minimize: true,
       debug: false
     })
   ]
