@@ -14,6 +14,29 @@
   "bugs": {
     "url": "https://github.com/<%= GITHUB_USER_AND_REPO %>/issues"
   },
+  "xo": {
+    "parser": "babel-eslint",
+    "space": 2,
+    "semicolon": false,
+    "extends": "xo-react",
+    "rules": {
+      "curly": 0,
+      "object-curly-spacing": 0,
+      "unicorn/explicit-length-check": 0,
+      "unicorn/filename-case": 0,
+      "react/jsx-space-before-closing": 0,
+      "import/no-unassigned-import": 0,
+      "import/no-unresolved": [2, {
+        "ignore": [
+          "^ducks|^components|^modules|^utils|^stylesheets|^images|^media"
+        ]
+      }]
+    },
+    "envs": [
+      "node",
+      "browser"
+    ]
+  },
   "homepage": "https://github.com/<%= GITHUB_USER_AND_REPO %>#readme"<% if (IS_DEBUGGING) { %>,
   "devDependencies": {
     "shazamjs": "file:../"

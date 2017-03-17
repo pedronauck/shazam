@@ -37,10 +37,10 @@ const config = new Config().merge({
   module: {
     rules: [{
       test: /\.js$/,
-      loader: 'eslint-loader',
+      loader: 'xo-loader',
       exclude: /node_modules/,
       enforce: 'pre'
-    },{
+    }, {
       test: /\.js$/,
       include: [paths.app.src],
       exclude: /node_modules/,
