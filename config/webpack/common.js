@@ -38,7 +38,7 @@ const config = new Config().merge({
   },
   module: {
     rules: [{
-      test: /\.js$/,
+      test: /\.(js|jsx)$/,
       include: [paths.app.src],
       exclude: /node_modules/,
       use: {
