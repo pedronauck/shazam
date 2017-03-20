@@ -1,20 +1,22 @@
-const _  = require('lodash');
-const chalk = require('chalk');
-const emoji = require('node-emoji');
-const webpack = require('webpack');
-const { Config } = require('webpack-config');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+process.noDeprecation = true
 
-const paths = require('../paths');
-const env = require('../env');
-const loadConfig = require('../../utils/load-config');
-const hourglass = emoji.get(':hourglass:');
+const chalk = require('chalk')
+const emoji = require('node-emoji')
+const webpack = require('webpack')
+const { Config } = require('webpack-config')
+const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
-const IS_PROD = (process.env.NODE_ENV === 'production');
-const PUBLIC_URL = process.env.PUBLIC_URL || '';
-const PUBLIC_PATH = '/';
+const paths = require('../paths')
+const env = require('../env')
+const loadConfig = require('../../utils/load-config')
+
+const hourglass = emoji.get(':hourglass:')
+
+const IS_PROD = (process.env.NODE_ENV === 'production')
+const PUBLIC_URL = process.env.PUBLIC_URL || ''
+const PUBLIC_PATH = '/'
 
 const config = new Config().merge({
   output: {
@@ -29,24 +31,19 @@ const config = new Config().merge({
       paths.app.nodeModules,
       paths.app.assets
     ],
-    moduleExtensions: ["*-loader"],
+    moduleExtensions: ['*-loader'],
     alias: {
-      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator'),
+      'babel-runtime/regenerator': require.resolve('babel-runtime/regenerator')
     }
   },
   module: {
     rules: [{
       test: /\.js$/,
-      loader: 'eslint-loader',
-      exclude: /node_modules/,
-      enforce: 'pre'
-    },{
-      test: /\.js$/,
       include: [paths.app.src],
       exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
-        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`),
+        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
       }
     }, {
       test: /\.svg$/,
@@ -78,7 +75,7 @@ const config = new Config().merge({
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
-      'CONFIG': JSON.stringify(loadConfig('envConfig'))
+      CONFIG: JSON.stringify(loadConfig('envConfig'))
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -88,6 +85,6 @@ const config = new Config().merge({
     new InterpolateHtmlPlugin(Object.assign({}, { PUBLIC_URL }, loadConfig('htmlData'))),
     new LodashModuleReplacementPlugin()
   ]
-});
+})
 
-module.exports = config;
+module.exports = config
