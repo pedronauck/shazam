@@ -1,10 +1,10 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   babelrc: false,
   cacheDirectory: true,
   presets: [
-    [require.resolve('babel-preset-latest'), { modules: false }],
+    [require.resolve('babel-preset-env'), { modules: false }],
     require.resolve('babel-preset-react')
   ],
   plugins: [
@@ -26,4 +26,4 @@ module.exports = {
       moduleName: path.dirname(require.resolve('babel-runtime/package'))
     }]
   ]
-};
+}

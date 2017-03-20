@@ -1,4 +1,4 @@
-const loadConfig = require('./load-config');
+const loadConfig = require('./load-config')
 
 module.exports = [{
   loader: 'css-loader',
@@ -10,8 +10,6 @@ module.exports = [{
 }, {
   loader: 'postcss-loader',
   options: {
-    plugins(bundler) {
-      return loadConfig('postcss', bundler) || [];
-    }
+    plugins: bundler => loadConfig('postcss', bundler) || []
   }
-}];
+}]

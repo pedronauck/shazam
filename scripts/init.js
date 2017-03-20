@@ -1,16 +1,16 @@
 /* eslint no-console: 0 */
 
-const _ = require('lodash');
-const fs = require('fs');
-const ora = require('ora');
-const gitConfig = require('git-config');
-const { argv } = require('yargs');
-const { prompt } = require('inquirer');
-const { resolve } = require('path');
-const { series } = require('async');
-const { capitalize, kebabCase } = require('lodash');
-const { red, green, blue } = require('chalk');
-const { tick: tickEmoji, cross: crossEmoji, pointer } = require('figures');
+const fs = require('fs')
+const { resolve } = require('path')
+const _ = require('lodash')
+const ora = require('ora')
+const gitConfig = require('git-config')
+const { argv } = require('yargs')
+const { prompt } = require('inquirer')
+const { series } = require('async')
+const { capitalize, kebabCase } = require('lodash')
+const { red, green, blue } = require('chalk')
+const { tick: tickEmoji, cross: crossEmoji, pointer } = require('figures')
 const {
   mkdir,
   test,
@@ -24,167 +24,163 @@ const {
   cat,
   rm,
   which
-} = require('shelljs');
+} = require('shelljs')
 
-const tick = green(tickEmoji);
-const cross = red(crossEmoji);
+const tick = green(tickEmoji)
+const cross = red(crossEmoji)
 
-const DEFAULT_PORT = argv.port;
-const IS_DEBUGGING = process.env.DEBUG;
-const TEMPLATE_PATH = resolve(__dirname, '../template');
+const DEFAULT_PORT = argv.port
+const IS_DEBUGGING = process.env.DEBUG
+const TEMPLATE_PATH = resolve(__dirname, '../template')
 
 const DEPENDENCIES = [
   'react',
   'react-dom',
-  'react-router',
+  'react-router@^3.0.1',
   'react-redux',
   'react-router-redux',
-  'redux',
-  'redux-thunk',
-  'redux-logger'
-];
+  'redux'
+]
 
 const DEV_DEPENDENCIES = [
   'postcss-cssnext',
-  ...!IS_DEBUGGING ? ['shazamjs'] : []
-];
+  ...IS_DEBUGGING ? [] : ['shazamjs']
+]
 
-const fullPath = (pathname) => resolve(process.cwd(), pathname);
+const fullPath = pathname => resolve(process.cwd(), pathname)
 
 const checkYarnInstalled = () => {
   if (!which('yarn')) {
-    console.log(red('Sorry, you need to install Yarn package manager'));
-    exit(1);
+    console.log(red('Sorry, you need to install Yarn package manager'))
+    exit(1)
   }
-};
+}
 
-const logFiles = (pathname) =>
+const logFiles = pathname =>
   find('-RA', pathname)
     .filter(file => !/.DS_Store/.test(file))
-    .forEach(file => console.log(`${tick} ${file.replace(process.cwd(), '.')}`));
+    .forEach(file => console.log(`${tick} ${file.replace(process.cwd(), '.')}`))
 
-const copyDevFiles = (appFullPath) => {
+const copyDevFiles = appFullPath => {
   ls(TEMPLATE_PATH)
-    .filter(file => /^_/.test(file))
-    .forEach((copiedFile) => {
-      cp(`${TEMPLATE_PATH}/${copiedFile}`, appFullPath);
-      mv(`${appFullPath}/${copiedFile}`, `${appFullPath}/${copiedFile.replace('_', '.')}`);
-    });
-};
+    .filter(file => file.startsWith('_'))
+    .forEach(copiedFile => {
+      cp(`${TEMPLATE_PATH}/${copiedFile}`, appFullPath)
+      mv(`${appFullPath}/${copiedFile}`, `${appFullPath}/${copiedFile.replace('_', '.')}`)
+    })
+}
 
 const copyAppTemplate = (appPath, { template }, cb) => {
-  const appFullPath = fullPath(appPath);
-  const pathExists = !test('-d', appFullPath);
+  const appFullPath = fullPath(appPath)
+  const pathExists = !test('-d', appFullPath)
 
-  console.log(blue(`\n${pointer} Generating app folder and files...`));
+  console.log(blue(`\n${pointer} Generating app folder and files...`))
 
   if (pathExists) {
-    mkdir('-p', appFullPath);
-    cp('-R', `${TEMPLATE_PATH}/${template}`, appFullPath);
-    mv(`${appFullPath}/${template}`, `${appFullPath}/app`);
+    mkdir('-p', appFullPath)
+    cp('-R', `${TEMPLATE_PATH}/${template}`, appFullPath)
+    mv(`${appFullPath}/${template}`, `${appFullPath}/app`)
 
-    copyDevFiles(appFullPath);
-    logFiles(appFullPath);
+    copyDevFiles(appFullPath)
+    logFiles(appFullPath)
 
-    cb();
+    cb()
+  } else {
+    console.log(red(`${pointer} Sorry, this folder already exists!`))
+    exit(1)
   }
-  else {
-    console.log(red(`${pointer} Sorry, this folder already exists!`));
-    exit(1);
-  }
-};
+}
 
 const addAssets = (appPath, answers, cb) => {
-  const appFullPath = fullPath(appPath);
+  const appFullPath = fullPath(appPath)
 
-  console.log(blue(`\n${pointer} Adding assets...`));
+  console.log(blue(`\n${pointer} Adding assets...`))
 
-  cp('-R', `${TEMPLATE_PATH}/assets`, `${appFullPath}`);
-  mkdir(`${appFullPath}/assets/media`);
+  cp('-R', `${TEMPLATE_PATH}/assets`, `${appFullPath}`)
+  mkdir(`${appFullPath}/assets/media`)
 
-  logFiles(`${appFullPath}/assets/*`);
+  logFiles(`${appFullPath}/assets/*`)
 
-  cb();
-};
+  cb()
+}
 
 const copyConfigFile = (filename, appPath, cb) => {
-  const appFullPath = fullPath(appPath);
-  const newFilename = filename.replace('.tpl', '');
-  const filepath = `${appFullPath}/${newFilename}`;
+  const appFullPath = fullPath(appPath)
+  const newFilename = filename.replace('.tpl', '')
+  const filepath = `${appFullPath}/${newFilename}`
 
   console.log(blue(`\n${pointer} Creating ${newFilename} file...`))
-  console.log(`${tick} ${filepath.replace(process.cwd(), '.')}`);
+  console.log(`${tick} ${filepath.replace(process.cwd(), '.')}`)
 
-  cp(`${TEMPLATE_PATH}/${filename}`, appFullPath);
-  mv(`${appFullPath}/${filename}`, filepath);
+  cp(`${TEMPLATE_PATH}/${filename}`, appFullPath)
+  mv(`${appFullPath}/${filename}`, filepath)
 
-  cb(filepath);
-};
+  cb(filepath)
+}
 
-const compileTemplateFile = (data) => (filepath) => {
-  const fileStr = cat(filepath);
-  const compiled = _.template(fileStr);
-  const result = compiled(data);
+const compileTemplateFile = data => filepath => {
+  const fileStr = cat(filepath)
+  const compiled = _.template(fileStr)
+  const result = compiled(data)
 
-  rm(filepath);
-  fs.writeFileSync(filepath, result, 'utf-8');
-};
+  rm(filepath)
+  fs.writeFileSync(filepath, result, 'utf-8')
+}
 
 const createConfigFiles = (appPath, answers, cb) => {
-  const gitRepo = `${answers.gitUser}/${answers.appName}`;
+  const gitRepo = `${answers.gitUser}/${answers.appName}`
 
   copyConfigFile('package.tpl.json', appPath, compileTemplateFile({
     APP_NAME: answers.appName,
     APP_DESCRIPTION: answers.appDescription,
     GITHUB_USER_AND_REPO: gitRepo,
     IS_DEBUGGING
-  }));
+  }))
 
   copyConfigFile('shazam.tpl.config.js', appPath, compileTemplateFile({
     APP_TITLE: answers.appTitle,
     TEMPLATE_TYPE: answers.template,
     DEFAULT_PORT
-  }));
+  }))
 
-  cb();
-};
+  cb()
+}
 
 const yarnInstall = (type, dependencies, cb) => {
-  const spinner = ora(`Downloading ${type}`).start();
-  const flag = type === 'dependencies' ? '' : '--dev';
-  const cmd = `yarn add ${dependencies.join(' ')} ${flag}`;
+  const spinner = ora(`Downloading ${type}`).start()
+  const flag = type === 'dependencies' ? '' : '--dev'
+  const cmd = `yarn add ${dependencies.join(' ')} ${flag}`
 
-  checkYarnInstalled();
+  checkYarnInstalled()
   exec(cmd, { silent: true }, (code, stdout, stderr) => {
     if (code === 0) {
-      spinner.text = `${capitalize(type)} installed successfuly`;
-      spinner.succeed();
-      cb();
-    }
-    else {
+      spinner.text = `${capitalize(type)} installed successfuly`
+      spinner.succeed()
+      cb()
+    } else {
       console.log(red(`${cross} Sorry, something wrong happened!\n`))
-      console.log(stderr);
-      exit(0);
+      console.log(stderr)
+      exit(0)
     }
   })
-};
+}
 
 const installDependencies = (appPath, cb) => {
-  cd(fullPath(appPath));
+  cd(fullPath(appPath))
 
-  console.log(blue(`\n${pointer} Installing dependencies... This may take couple minutes!`));
+  console.log(blue(`\n${pointer} Installing dependencies... This may take couple minutes!`))
 
   yarnInstall('dependencies', DEPENDENCIES, () =>
-    yarnInstall('devDependencies', DEV_DEPENDENCIES, () => cb()));
-};
+    yarnInstall('devDependencies', DEV_DEPENDENCIES, () => cb()))
+}
 
-module.exports = function(defaultAppName) {
-  const config = gitConfig.sync();
+const init = defaultAppName => {
+  const config = gitConfig.sync()
   const prompts = [{
     type: 'input',
     name: 'appTitle',
     message: 'What\'s the title of your project?'
-  },{
+  }, {
     type: 'input',
     name: 'appName',
     message: 'What\'s the name of your project?',
@@ -209,16 +205,18 @@ module.exports = function(defaultAppName) {
       name: 'React with Router and Redux',
       value: 'with-router-redux'
     }]
-  }];
+  }]
 
-  prompt(prompts).then((answers) => {
-    const appPath = kebabCase(answers.appName);
+  prompt(prompts).then(answers => {
+    const appPath = kebabCase(answers.appName)
 
     series([
-      (cb) => copyAppTemplate(appPath, answers, cb),
-      (cb) => addAssets(appPath, answers, cb),
-      (cb) => createConfigFiles(appPath, answers, cb),
-      (cb) => installDependencies(appPath, cb)
-    ]);
-  });
+      cb => copyAppTemplate(appPath, answers, cb),
+      cb => addAssets(appPath, answers, cb),
+      cb => createConfigFiles(appPath, answers, cb),
+      cb => installDependencies(appPath, cb)
+    ])
+  })
 }
+
+module.exports = init

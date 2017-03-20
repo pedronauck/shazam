@@ -1,4 +1,4 @@
-const common = require('./common');
+const common = require('./common')
 
 common.plugins.push(
   require.resolve('react-hot-loader/babel'),
@@ -6,6 +6,6 @@ common.plugins.push(
   require.resolve('babel-plugin-transform-react-pure-class-to-function'),
   require.resolve('babel-plugin-transform-react-jsx-source'),
   require.resolve('babel-plugin-transform-react-jsx-self')
-);
+)
 
-module.exports = common;
+module.exports = common

@@ -1,13 +1,13 @@
-const path = require('path');
+const path = require('path')
 
-const resolveOwn = (relativePath) => path.resolve(__dirname, relativePath);
-const resolveApp = (relativePath) => path.resolve(relativePath);
+const resolveOwn = relativePath => path.resolve(__dirname, relativePath)
+const resolveApp = relativePath => path.resolve(relativePath)
 
-var nodePaths = (process.env.NODE_PATH || '')
+const nodePaths = (process.env.NODE_PATH || '')
   .split(process.platform === 'win32' ? ';' : ':')
   .filter(Boolean)
   .filter(folder => !path.isAbsolute(folder))
-  .map(resolveApp);
+  .map(resolveApp)
 
 module.exports = {
   app: {
@@ -20,11 +20,11 @@ module.exports = {
     build: resolveApp('build'),
     packageJson: resolveApp('package.json'),
     nodeModules: resolveApp('node_modules'),
-    htmlFile: resolveApp('assets/index.ejs'),
+    htmlFile: resolveApp('assets/index.html'),
     mainJSFile: resolveApp('app/main.js'),
     shazamConfig: resolveApp('shazam.config.js')
   },
   config: resolveOwn('../config'),
   nodeModules: resolveOwn('../node_modules'),
   nodePaths
-};
+}

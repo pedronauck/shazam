@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /* eslint no-unused-expressions: 0, func-names: 0 */
 
-const yargs = require('yargs');
+const yargs = require('yargs')
 
 const commonArgs = {
-  'port': {
+  port: {
     alias: 'p',
     default: 3000
   },
@@ -12,25 +12,25 @@ const commonArgs = {
     alias: 'd',
     default: false
   }
-};
+}
 
 const start = Object.assign({}, commonArgs, {
   'no-css-modules': {
     alias: 'ncm',
     default: false
   }
-});
+})
 
 yargs
   .usage('$0 <cmd> [args]')
-  .command('init [name]', 'create app structure', commonArgs, (argv) => {
-    require('../scripts/init')(argv.name);
+  .command('init [name]', 'create app structure', commonArgs, argv => {
+    require('../scripts/init')(argv.name)
   })
-  .command('start', 'run development server', start, (argv) => {
-    require('../scripts/start')();
+  .command('start', 'run development server', start, () => {
+    require('../scripts/start')()
   })
-  .command('build', 'build production version of app', {}, (argv) => {
-    require('../scripts/build')();
+  .command('build', 'build production version of app', {}, () => {
+    require('../scripts/build')()
   })
   .help()
-  .argv;
+  .argv

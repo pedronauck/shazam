@@ -1,16 +1,16 @@
-const { join, resolve } = require('path');
-const { Config } = require('webpack-config');
-const { argv } = require('yargs');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
+const { join, resolve } = require('path')
+const { Config } = require('webpack-config')
+const { argv } = require('yargs')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 
-const paths = require('../paths');
-const loadConfig = require('../../utils/load-config');
-const cssModulesLoader = require('../../utils/css-module-loaders');
+const paths = require('../paths')
+const loadConfig = require('../../utils/load-config')
+const cssModulesLoader = require('../../utils/css-module-loaders')
 
-const CSS_MODULES = !argv.noCssModules;
+const CSS_MODULES = !argv.noCssModules
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   devtool: 'cheap-module-eval-source-map',
@@ -39,7 +39,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
         loader: 'postcss-loader',
         options: {
           plugins(bundler) {
-            return loadConfig('postcss', bundler) || [];
+            return loadConfig('postcss', bundler) || []
           }
         }
       }]
@@ -67,6 +67,6 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     new WatchMissingNodeModulesPlugin(paths.appNodeModule),
     new CaseSensitivePathsPlugin()
   ]
-});
+})
 
-module.exports = config.merge(loadConfig('webpackConfig', config));
+module.exports = config.merge(loadConfig('webpackConfig', config))

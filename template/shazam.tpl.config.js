@@ -1,4 +1,4 @@
-const cssnext = require('postcss-cssnext');
+const cssnext = require('postcss-cssnext')
 
 /*
 *
@@ -7,19 +7,19 @@ const cssnext = require('postcss-cssnext');
 * @param { env }
 * @result 'development' | 'production'
 *
-* @return { object };
+* @return { object }
 *
 */
 
-exports.webpackConfig = (env) => ({
+exports.webpackConfig = env => ({
   /* your custom webpack config */
-});
+})
 
 /*
 *
 * @function postcss
 *
-* @return [ plugins ];
+* @return [ plugins ]
 *
 */
 
@@ -29,10 +29,10 @@ exports.postcss = () => [
       '>1%',
       'last 4 versions',
       'Firefox ESR',
-      'not ie < 9', // React doesn't support IE8 anyway
+      'not ie < 9' // React doesn't support IE8 anyway
     ]
   })
-];
+]
 
 /*
 *
@@ -41,15 +41,15 @@ exports.postcss = () => [
 * @param { env }
 * @result 'development' | 'production'
 *
-* @return { object };
+* @return { object }
 *
 */
 
-exports.envConfig = (env) => ({
+exports.envConfig = env => ({
   api: {
     hostname: 'http://localhost:<%= DEFAULT_PORT %>'
   }
-});
+})
 
 /*
 *
@@ -58,10 +58,10 @@ exports.envConfig = (env) => ({
 * @param { env }
 * @result 'development' | 'production'
 *
-* @return { object };
+* @return { object }
 *
 */
 
-exports.htmlData = (env) => ({
+exports.htmlData = env => ({
   TITLE: '<%= APP_TITLE %>'
-});
+})

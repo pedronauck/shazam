@@ -1,23 +1,23 @@
-import 'stylesheets/base';
+import 'stylesheets/base'
 
-import React from 'react';
-import { AppContainer } from 'react-hot-loader';
-import { render } from 'react-dom';
+import React from 'react'
+import { AppContainer } from 'react-hot-loader'
+import { render } from 'react-dom'
 
-import App from 'components/App';
+import App from 'components/App'
 
-const rootEl = document.getElementById('root');
+const rootEl = document.getElementById('root')
 const renderApp = (Comp = App) => {
   render((
     <AppContainer>
       <Comp />
     </AppContainer>
-  ), rootEl);
-};
+  ), rootEl)
+}
 
 if (module.hot) {
   module.hot.accept('./components/App', () =>
-    renderApp(require('./components/App').default));
+    renderApp(require('./components/App').default))
 }
 
-renderApp();
+renderApp()

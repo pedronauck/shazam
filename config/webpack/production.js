@@ -1,17 +1,17 @@
-const { argv } = require('yargs');
-const { join, resolve } = require('path');
-const { Config } = require('webpack-config');
-const webpack = require('webpack');
-const StatsPlugin = require('stats-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin');
+const { join, resolve } = require('path')
+const { argv } = require('yargs')
+const { Config } = require('webpack-config')
+const webpack = require('webpack')
+const StatsPlugin = require('stats-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin')
 
-const paths = require('../paths');
-const loadConfig = require('../../utils/load-config');
-const cssModulesLoader = require('../../utils/css-module-loaders');
+const paths = require('../paths')
+const loadConfig = require('../../utils/load-config')
+const cssModulesLoader = require('../../utils/css-module-loaders')
 
-const CSS_MODULES = !argv.noCssModules;
+const CSS_MODULES = !argv.noCssModules
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
@@ -41,7 +41,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
           loader: 'postcss-loader',
           options: {
             plugins(bundler) {
-              return loadConfig('postcss', bundler) || [];
+              return loadConfig('postcss', bundler) || []
             }
           }
         }]
@@ -82,6 +82,6 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
       debug: false
     })
   ]
-});
+})
 
-module.exports = config.merge(loadConfig('webpackConfig', config));
+module.exports = config.merge(loadConfig('webpackConfig', config))
