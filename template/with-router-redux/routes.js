@@ -1,21 +1,10 @@
-import { App, NotFound } from 'components/layouts';
-import Home from 'modules/Home';
+import { app, notfound } from './modules'
 
-const appRoutes = {
-  component: App,
+const routes = () => ({
   childRoutes: [
-    Home
+    app(),
+    notfound()
   ]
-};
+})
 
-const notFoundRoutes = {
-  path: '*',
-  component: NotFound
-};
-
-export default {
-  childRoutes: [
-    appRoutes,
-    notFoundRoutes
-  ]
-};
+export default routes
