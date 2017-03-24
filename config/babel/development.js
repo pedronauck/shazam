@@ -1,3 +1,6 @@
+const { merge } = require('lodash')
+
+const loadConfig = require('../../utils/load-config')
 const common = require('./common')
 
 common.plugins.push(
@@ -8,4 +11,4 @@ common.plugins.push(
   require.resolve('babel-plugin-transform-react-jsx-self')
 )
 
-module.exports = common
+module.exports = merge(common, loadConfig('babel'))

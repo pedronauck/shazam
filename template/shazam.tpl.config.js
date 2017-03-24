@@ -17,6 +17,21 @@ exports.webpackConfig = env => ({
 
 /*
 *
+* @function babel
+*
+* @param { env }
+* @result 'development' | 'production'
+*
+* @return { object }
+*
+*/
+
+exports.babel = env => ({
+  /* your custom babel config */
+})
+
+/*
+*
 * @function postcss
 *
 * @return [ plugins ]
