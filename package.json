@@ -87,9 +87,11 @@
     "webpack-config": "^7.0.0",
     "webpack-dev-middleware": "^1.10.1",
     "webpack-hot-middleware": "^2.17.1",
-    "xo": "^0.18.0",
-    "xo-loader": "^0.7.0",
     "yargs": "^7.0.2"
+  },
+  "devDependencies": {
+    "xo": "^0.18.0",
+    "xo-loader": "^0.7.0"
   },
   "xo": {
     "parser": "babel-eslint",
