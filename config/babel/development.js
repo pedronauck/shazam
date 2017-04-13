@@ -1,4 +1,4 @@
-const { merge } = require('lodash')
+const merge = require('deepmerge')
 
 const loadConfig = require('../../utils/load-config')
 const common = require('./common')
