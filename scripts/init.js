@@ -202,6 +202,9 @@ const init = defaultAppName => {
       name: 'Pure React',
       value: 'default'
     }, {
+      name: 'React with Router',
+      value: 'with-router'
+    }, {
       name: 'React with Router and Redux',
       value: 'with-router-redux'
     }]
