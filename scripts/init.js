@@ -197,10 +197,13 @@ const init = defaultAppName => {
   }, {
     type: 'list',
     name: 'template',
-    message: 'Which type of template you whant to use?',
+    message: 'Which type of template you want to use?',
     choices: [{
       name: 'Pure React',
       value: 'default'
+    }, {
+      name: 'React with Router',
+      value: 'with-router'
     }, {
       name: 'React with Router and Redux',
       value: 'with-router-redux'
