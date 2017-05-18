@@ -19,7 +19,7 @@ const filesize = require('filesize')
 const webpack = require('webpack')
 const recursive = require('recursive-readdir')
 const stripAnsi = require('strip-ansi')
-const { exit } = require('shelljs')
+const { exit, test, mkdir } = require('shelljs')
 const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles')
 const gzipSize = require('gzip-size').sync
 
@@ -156,6 +156,8 @@ const printFileSizes = (stats, previousSizeMap) => {
 }
 
 const buildScript = () => {
+  if (!test('-d', paths.app.build)) mkdir(paths.app.build)
+
   recursive(paths.app.build, (err, fileNames) => {
     if (err) console.log(err)
 

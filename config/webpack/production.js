@@ -6,6 +6,7 @@ const StatsPlugin = require('stats-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin')
+const BabiliPlugin = require('babili-webpack-plugin')
 
 const paths = require('../paths')
 const loadConfig = require('../../utils/load-config')
@@ -56,10 +57,9 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     }] : []]
   },
   plugins: [
+    new BabiliPlugin(),
     new DuplicatePackageCheckerPlugin(),
-    new StatsPlugin('bundle-stats.json', {
-      chunkModules: true
-    }),
+    new StatsPlugin('bundle-stats.json', { chunkModules: true }),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile,
