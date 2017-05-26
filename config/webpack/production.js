@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin')
 const BabiliPlugin = require('babili-webpack-plugin')
+const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin')
 
 const paths = require('../paths')
 const loadConfig = require('../../utils/load-config')
@@ -57,6 +58,9 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     }] : []]
   },
   plugins: [
+    new SimpleProgressWebpackPlugin({
+      format: 'expanded'
+    }),
     new BabiliPlugin(),
     new DuplicatePackageCheckerPlugin(),
     new StatsPlugin('bundle-stats.json', { chunkModules: true }),

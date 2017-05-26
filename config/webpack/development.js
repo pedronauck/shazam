@@ -5,6 +5,7 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
+const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin')
 
 const paths = require('../paths')
 const loadConfig = require('../../utils/load-config')
@@ -59,6 +60,9 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     hints: false
   },
   plugins: [
+    new SimpleProgressWebpackPlugin({
+      format: 'compact'
+    }),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.app.htmlFile

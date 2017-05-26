@@ -1,18 +1,13 @@
 process.noDeprecation = true
 
-const chalk = require('chalk')
-const emoji = require('node-emoji')
 const webpack = require('webpack')
 const { Config } = require('webpack-config')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
-const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
 const paths = require('../paths')
 const env = require('../env')
 const loadConfig = require('../../utils/load-config')
-
-const hourglass = emoji.get(':hourglass:')
 
 const IS_PROD = (process.env.NODE_ENV === 'production')
 const PUBLIC_URL = process.env.PUBLIC_URL || ''
@@ -69,9 +64,6 @@ const config = new Config().merge({
     }]
   },
   plugins: [
-    new ProgressBarPlugin({
-      format: `${hourglass}  Compiling [${chalk.cyan.bold(':bar')}] ${chalk.cyan.bold(':percent')}`
-    }),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
