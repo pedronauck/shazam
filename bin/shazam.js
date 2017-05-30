@@ -21,6 +21,14 @@ const start = Object.assign({}, commonArgs, {
   }
 })
 
+const build = Object.assign({}, commonArgs, {
+  minify: {
+    alias: 'm',
+    choices: ['uglify', 'babili'],
+    default: 'babili'
+  }
+})
+
 yargs
   .usage('$0 <cmd> [args]')
   .command('init [name]', 'create app structure', commonArgs, argv => {
@@ -29,7 +37,7 @@ yargs
   .command('start', 'run development server', start, () => {
     require('../scripts/start')()
   })
-  .command('build', 'build production version of app', {}, () => {
+  .command('build', 'build production version of app', build, () => {
     require('../scripts/build')()
   })
   .help()

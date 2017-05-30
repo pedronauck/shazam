@@ -1,3 +1,4 @@
+/* eslint camelcase: 0, new-cap: 0 */
 const { join, resolve } = require('path')
 const { argv } = require('yargs')
 const { Config } = require('webpack-config')
@@ -7,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin')
 const BabiliPlugin = require('babili-webpack-plugin')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin')
 
 const paths = require('../paths')
@@ -14,6 +16,32 @@ const loadConfig = require('../../utils/load-config')
 const cssModulesLoader = require('../../utils/css-module-loaders')
 
 const CSS_MODULES = !argv.noCssModules
+
+const chooseMinifySystem = () => {
+  switch (argv.minify) {
+    case 'uglify':
+      return new UglifyJSPlugin({
+        sourceMap: true,
+        compress: {
+          warnings: false,
+          screw_ie8: true,
+          conditionals: true,
+          unused: true,
+          comparisons: true,
+          sequences: true,
+          dead_code: true,
+          evaluate: true,
+          if_return: true,
+          join_vars: true
+        },
+        comments: false
+      })
+    default:
+      return new BabiliPlugin()
+  }
+}
+
+console.log(chooseMinifySystem())
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
@@ -61,7 +89,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
     new SimpleProgressWebpackPlugin({
       format: 'expanded'
     }),
-    new BabiliPlugin(),
+    chooseMinifySystem(),
     new DuplicatePackageCheckerPlugin(),
     new StatsPlugin('bundle-stats.json', { chunkModules: true }),
     new HtmlWebpackPlugin({
