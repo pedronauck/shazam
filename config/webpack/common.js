@@ -1,9 +1,11 @@
+/* eslint new-cap: 0 */
 process.noDeprecation = true
 
 const webpack = require('webpack')
 const { Config } = require('webpack-config')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const HappyPack = require('happypack')
 
 const paths = require('../paths')
 const env = require('../env')
@@ -36,10 +38,7 @@ const config = new Config().merge({
       test: /\.(js|jsx)$/,
       include: [paths.app.src],
       exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
-      }
+      loader: ['happypack/loader?id=js']
     }, {
       test: /\.svg$/,
       loader: 'file-loader',
@@ -64,6 +63,14 @@ const config = new Config().merge({
     }]
   },
   plugins: [
+    new HappyPack({
+      id: 'js',
+      threadPool: HappyPack.ThreadPool({ size: 5 }),
+      loaders: [{
+        loader: 'babel-loader',
+        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
+      }]
+    }),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({
