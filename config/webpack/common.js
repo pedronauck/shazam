@@ -17,15 +17,6 @@ const PUBLIC_URL = process.env.PUBLIC_URL || ''
 const PUBLIC_PATH = '/'
 const HAS_HAPPYPACK = argv.happypack
 
-const jsLoader = Object.assign({
-  test: /\.(js|jsx)$/,
-  include: [paths.app.src],
-  exclude: /node_modules/,
-  loader: [HAS_HAPPYPACK ? 'happypack/loader?id=js' : 'babel-loader']
-}, !HAS_HAPPYPACK && {
-  query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
-})
-
 const plugins = [
   new webpack.NamedModulesPlugin(),
   new webpack.DefinePlugin(env),
@@ -41,7 +32,16 @@ const plugins = [
   new LodashModuleReplacementPlugin()
 ]
 
+let jsLoader = {
+  loader: 'babel-loader',
+  query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
+}
+
 if (HAS_HAPPYPACK) {
+  jsLoader = {
+    loader: ['happypack/loader?id=js']
+  }
+
   plugins.push(new HappyPack({
     id: 'js',
     threadPool: HappyPack.ThreadPool({ size: 5 }),
@@ -71,7 +71,12 @@ const config = new Config().merge({
     }
   },
   module: {
-    rules: [jsLoader, {
+    rules: [{
+      test: /\.(js|jsx)$/,
+      include: [paths.app.src],
+      exclude: /node_modules/,
+      use: jsLoader
+    }, {
       test: /\.svg$/,
       loader: 'file-loader',
       include: [paths.app.images, paths.app.nodeModules],
