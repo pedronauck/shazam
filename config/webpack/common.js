@@ -22,7 +22,7 @@ const jsLoader = Object.assign({
   include: [paths.app.src],
   exclude: /node_modules/,
   loader: [HAS_HAPPYPACK ? 'happypack/loader?id=js' : 'babel-loader']
-}, HAS_HAPPYPACK && {
+}, !HAS_HAPPYPACK && {
   query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
 })
 
