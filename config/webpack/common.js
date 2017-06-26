@@ -1,6 +1,7 @@
 /* eslint new-cap: 0 */
 process.noDeprecation = true
 
+const { argv } = require('yargs')
 const webpack = require('webpack')
 const { Config } = require('webpack-config')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
@@ -14,6 +15,7 @@ const loadConfig = require('../../utils/load-config')
 const IS_PROD = (process.env.NODE_ENV === 'production')
 const PUBLIC_URL = process.env.PUBLIC_URL || ''
 const PUBLIC_PATH = '/'
+const HAS_HAPPYPACK = argv.happypack
 
 const config = new Config().merge({
   output: {
@@ -38,7 +40,12 @@ const config = new Config().merge({
       test: /\.(js|jsx)$/,
       include: [paths.app.src],
       exclude: /node_modules/,
-      loader: ['happypack/loader?id=js']
+      ...HAS_HAPPYPACK ?
+      { loader: ['happypack/loader?id=js'] } :
+      {
+        loader: 'babel-loader',
+        query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
+      }
     }, {
       test: /\.svg$/,
       loader: 'file-loader',
@@ -63,14 +70,14 @@ const config = new Config().merge({
     }]
   },
   plugins: [
-    new HappyPack({
+    ...HAS_HAPPYPACK ? [new HappyPack({
       id: 'js',
       threadPool: HappyPack.ThreadPool({ size: 5 }),
       loaders: [{
         loader: 'babel-loader',
         query: require(`../babel/${JSON.parse(env['process.env.NODE_ENV'])}`)
       }]
-    }),
+    })] : null,
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env),
     new webpack.DefinePlugin({

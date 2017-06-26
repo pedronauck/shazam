@@ -26,6 +26,10 @@ const build = Object.assign({}, commonArgs, {
     alias: 'm',
     choices: ['uglify', 'babili'],
     default: 'babili'
+  },
+  happypack: {
+    alias: 'hp',
+    default: false
   }
 })
 
