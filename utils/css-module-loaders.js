@@ -5,6 +5,7 @@ module.exports = [{
   options: {
     modules: true,
     importLoaders: true,
+    sourceMap: true,
     localIdentName: '[folder]__[local]___[hash:base64:5]'
   }
 }, {

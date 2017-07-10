@@ -42,7 +42,6 @@ const chooseMinifySystem = () => {
 }
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
-  bail: true,
   devtool: argv.sourceMap,
   entry: {
     main: [
@@ -52,7 +51,8 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   },
   output: {
     filename: 'static/js/[name].[chunkhash:8].js',
-    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js'
+    chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
+    sourceMapFilename: 'static/js/[name].[chunkhash:8].js.map'
   },
   module: {
     rules: [{
@@ -107,7 +107,7 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
         minifyURLs: true
       }
     }),
-    new ExtractTextPlugin('static/css/[name].[contenthash:8].css'),
+    new ExtractTextPlugin('static/css/style.[contenthash:8].css'),
     new webpack.LoaderOptionsPlugin({
       debug: false
     })

@@ -25,7 +25,8 @@ const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   },
   output: {
     pathinfo: true,
-    filename: 'static/js/[name].js'
+    filename: 'static/js/[name].js',
+    sourceMapFilename: 'static/js/[name].js.map'
   },
   module: {
     rules: [{
