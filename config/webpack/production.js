@@ -43,7 +43,7 @@ const chooseMinifySystem = () => {
 
 const config = new Config().extend(resolve(__dirname, './common.js')).merge({
   bail: true,
-  devtool: 'cheap-module-source-map',
+  devtool: argv.sourceMap,
   entry: {
     main: [
       require.resolve('babel-polyfill'),

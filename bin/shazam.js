@@ -30,6 +30,22 @@ const build = Object.assign({}, commonArgs, {
   happypack: {
     alias: 'hp',
     default: false
+  },
+  sourceMap: {
+    alias: 'sm',
+    default: 'cheap-module-source-map',
+    choices: [
+      'eval',
+      'cheap-eval-source-map',
+      'cheap-source-map',
+      'cheap-module-eval-source-map',
+      'cheap-module-source-map',
+      'eval-source-map',
+      'source-map',
+      'inline-source-map',
+      'hidden-source-map',
+      'nosources-source-map'
+    ]
   }
 })
 
