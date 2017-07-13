@@ -5,7 +5,7 @@
   import/imports-first: 0
 */
 
-process.env.NODE_ENV = 'development'
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
 const { argv } = require('yargs')
 const emoji = require('node-emoji')

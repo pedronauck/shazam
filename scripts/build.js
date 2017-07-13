@@ -9,7 +9,7 @@
   import/imports-first: 0
 */
 
-process.env.NODE_ENV = 'production'
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 const fs = require('fs')
 const path = require('path')
